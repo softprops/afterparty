@@ -4,6 +4,10 @@
 
 > what happens on github...
 
+## docs
+
+Find them [here](http://softprops.github.io/afterparty)
+
 # usage
 
 ```shell
