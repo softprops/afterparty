@@ -34,7 +34,7 @@ struct Hub {
 }
 
 impl Hub {
-  pub fn authenticate(secret: &String, payload: &String, signature: &[u8]) -> bool {    
+  pub fn authenticate(secret: &String, payload: &String, signature: &[u8]) -> bool {
     let sbytes = secret.as_bytes();
     let pbytes = payload.as_bytes();
     let mut mac = Hmac::new(Sha1::new(), &sbytes);
@@ -151,7 +151,7 @@ impl Service {
     thread::spawn(move || {
       let filter = Filter { hooks: hooks };
       filter.recv(rx)
-    });   
+    });
     Server::http(&format!("0.0.0.0:{}", self.port())[..]).unwrap()
       .handle(Hub {
          secret: self.secret,
@@ -167,7 +167,6 @@ mod tests {
   use super::{Event, Filter, Service};
   use super::hook::Hook;
   use super::rep::Payload;
-  
 
   #[test]
   fn test_filter() {
@@ -199,7 +198,7 @@ mod tests {
     }, &Payload {
        ..Default::default()
     }).len());
-    
+
     assert_eq!(2, filter.filter(&Event {
       name: "c".to_owned(),
       ..Default::default()
