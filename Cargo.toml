@@ -1,7 +1,13 @@
 [package]
 name = "afterparty"
 version = "0.1.0"
-authors = ["doug <doug@meetup.com>"]
+authors = ["softprops <d.tangren@gmail.com>"]
+description = "A github webhook server."
+documentation = "http://softprops.github.io/afterparty"
+homepage = "https://github.com/softprops/afterparty"
+repository = "https://github.com/softprops/afterparty"
+keywords = ["github", "ci", "webhook"]
+license = "MIT"
 
 [dependencies]
 mysql = "0.14"
