@@ -16,15 +16,31 @@ use super::rep::Payload;
 /// `GH_EVENT_NAME` and `GH_EVENT_PAYLOAD` respectively
 #[derive(Clone, Default, Debug, RustcDecodable, RustcEncodable)]
 pub struct Hook {
+  /// Command to run when an event is recieved
   pub cmd: String,
+  /// List of github events that should trigger this hook
   pub events: Vec<String>,
+  /// Optional name of hook. Defaults to cmd
   pub name: Option<String>,
+  /// Github organization filter
   pub organization: Option<String>,
+  /// Github repository filter
   pub repository: Option<String>,
+  /// Github event sender filter
   pub sender: Option<String>
 }
 
 impl Hook {
+
+  /// return a debug hook that targets all events
+  /// and does nothing but echo the event name and payload
+  pub fn echo() -> Hook {
+     Hook {
+       cmd: "echo \"$GH_EVENT_NAME\": \"$GH_EVENT_PAYLOAD\"".to_owned(),
+       events: vec!["*".to_owned()],
+       ..Default::default()
+     }
+  }
 
   fn info(&self, msg: String) {
     write!(&mut io::stderr(),
@@ -36,15 +52,6 @@ impl Hook {
     print!("{} {}: {}", time::now().to_utc().rfc3339(), self.name(), msg)
   }
 
-  /// return a debug hook that targets all events
-  /// and does nothing but echo the event name and payload
-  pub fn echo() -> Hook {
-     Hook {
-       cmd: "echo \"$GH_EVENT_NAME\": \"$GH_EVENT_PAYLOAD\"".to_owned(),
-       events: vec!["*".to_owned()],
-       ..Default::default()
-     }
-  }
 
   /// return true if this hook targets the provided
   /// event name, false otherwise
@@ -90,7 +97,7 @@ impl Hook {
              match buf.read_line(&mut line) {
                 Ok(0) | Err(_)  => break,
                 Ok(_)  => lines.push(line)
-             }        
+             }
            }
            tx.send(Ok(lines)).unwrap()
          });
@@ -134,7 +141,7 @@ impl Hook {
              Ok(Err(e))    => self.err(format!("stderr io err {}\n", e)),
              Err(e)        => self.err(format!("stderr recv err {}\n", e))
            };
-    
+
            match status {
              Ok(s) => {
                if s.success() {
