@@ -1,5 +1,7 @@
 # afterparty
 
+[![Build Status](https://travis-ci.org/softprops/afterparty.svg?branch=master)](https://travis-ci.org/softprops/afterparty)
+
 > what happens on github...
 
 # usage
@@ -14,6 +16,3 @@ $ cat afterparty.json
 }
 $ afterparty -c afterparty.json
 ```
-
-
-
