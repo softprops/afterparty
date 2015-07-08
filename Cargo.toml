@@ -1,0 +1,11 @@
+[package]
+name = "afterparty"
+version = "0.1.0"
+authors = ["doug <doug@meetup.com>"]
+
+[dependencies]
+mysql = "0.14"
+hyper = "0.6"
+rust-crypto = "0.2"
+rustc-serialize = "0.3"
+time = "0.1"
