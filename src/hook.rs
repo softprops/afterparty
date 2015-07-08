@@ -29,11 +29,11 @@ impl Hook {
   fn info(&self, msg: String) {
     write!(&mut io::stderr(),
       "{} {}: {}",
-       time::now().to_utc().rfc3339(), self.name().clone(), msg);
+       time::now().to_utc().rfc3339(), self.name(), msg);
   }
 
   fn err(&self, msg: String) {
-    print!("{} {}: {}", time::now().to_utc().rfc3339(), self.name().clone(), msg)
+    print!("{} {}: {}", time::now().to_utc().rfc3339(), self.name(), msg)
   }
 
   /// return a debug hook that targets all events
