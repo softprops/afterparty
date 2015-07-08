@@ -14,3 +14,7 @@ hyper = "0.6"
 rust-crypto = "0.2"
 rustc-serialize = "0.3"
 time = "0.1"
+
+[[bin]]
+doc = false
+name = "afterparty"
