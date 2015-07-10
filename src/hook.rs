@@ -42,14 +42,14 @@ impl Hook {
      }
   }
 
-  fn info(&self, msg: String) {
+  fn info<S: Into<String>>(&self, msg: S) {
     write!(&mut io::stderr(),
       "{} {}: {}",
-       time::now().to_utc().rfc3339(), self.name(), msg);
+       time::now().to_utc().rfc3339(), self.name(), msg.into());
   }
 
-  fn err(&self, msg: String) {
-    print!("{} {}: {}", time::now().to_utc().rfc3339(), self.name(), msg)
+  fn err<S: Into<S>>(&self, msg: S) {
+    print!("{} {}: {}", time::now().to_utc().rfc3339(), self.name(), msg.into())
   }
 
 
