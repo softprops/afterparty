@@ -1,4 +1,4 @@
-//! A verify minimal representation of payload information
+//! A minimal representation of payload information
 
 #[derive(Debug, RustcEncodable, RustcDecodable, Default)]
 pub struct Payload {
