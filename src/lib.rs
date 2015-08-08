@@ -152,12 +152,15 @@ impl Service {
       let filter = Filter { hooks: hooks };
       filter.recv(rx)
     });
-    Server::http(&format!("0.0.0.0:{}", self.port())[..]).unwrap()
+    let addr = format!("0.0.0.0:{}", self.port());
+    let srvc = Server::http(&addr[..]).unwrap()
       .handle(Hub {
          secret: self.secret,
          deliveries: Mutex::new(tx),
          hooks: self.hooks
-      }).unwrap();
+      });
+    println!("listening on {}", addr);
+    srvc.unwrap();
   }
 }
 

@@ -10,6 +10,7 @@ keywords = ["github", "ci", "webhook"]
 license = "MIT"
 
 [dependencies]
+clap = "1.0"
 hyper = "0.6"
 rust-crypto = "0.2"
 rustc-serialize = "0.3"

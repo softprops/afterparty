@@ -48,7 +48,7 @@ impl Hook {
        time::now().to_utc().rfc3339(), self.name(), msg.into());
   }
 
-  fn err<S: Into<S>>(&self, msg: S) {
+  fn err<S: Into<String>>(&self, msg: S) {
     print!("{} {}: {}", time::now().to_utc().rfc3339(), self.name(), msg.into())
   }
 
@@ -57,8 +57,23 @@ impl Hook {
   /// event name, false otherwise
   pub fn targets(&self, event: &String, payload: &Payload) -> bool {
     // todo: filter on payload.{ repo, org, sender }
-    (self.events.contains(event)
-     || self.events.contains(&"*".to_owned()))
+    let targets_event = self.events.contains(event)
+      || self.events.contains(&"*".to_owned());
+    if let Some(ref porg) = payload.organization {
+      if let Some(ref org) = self.organization {
+        if porg.login != *org {
+          return false
+        }
+      }
+    }
+    if let Some(ref prepo) = payload.repository {
+      if let Some(ref repo) = self.repository {
+        if prepo.name != *repo {
+          return false
+        }
+      }
+    }
+    targets_event
   }
 
   /// return name if defined, otherwise cmd
