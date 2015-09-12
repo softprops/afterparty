@@ -1,5 +1,6 @@
+
 extern crate crypto;
-extern crate hyper;
+#[macro_use] extern crate hyper;
 extern crate rustc_serialize;
 extern crate time;
 
@@ -10,6 +11,7 @@ use crypto::mac::Mac;
 use crypto::hmac::Hmac;
 use crypto::sha1::Sha1;
 use hook::Hook;
+
 use hyper::server::{Handler, Server, Request, Response};
 use rep::Payload;
 use rustc_serialize::json;
@@ -18,6 +20,17 @@ use std::thread;
 use std::io::Read;
 use std::sync::Mutex;
 use std::sync::mpsc::{channel, Receiver, Sender};
+
+/// signature for request
+/// see [this document](https://developer.github.com/webhooks/securing/) for more information
+header! {(XHubSignature, "X-Hub-Signature") => [String]}
+
+/// name of Github event
+/// see [this document](https://developer.github.com/webhooks/#events) for available types
+header! {(XGithubEvent, "X-Github-Event") => [String]}
+
+/// unique id for each delivery
+header! {(XGithubDelivery, "X-Github-Deliver") => [String]}
 
 /// Raw, unparsed representation of an inbound github event
 #[derive(Clone, Debug, Default)]
@@ -47,19 +60,18 @@ impl Handler for Hub {
   fn handle(&self, mut req: Request, res: Response) {
     let mut payload = String::new();
     if let Ok(_) = req.read_to_string(&mut payload) {
-      if let Some(es) = req.headers.get_raw("X-Github-Event") {
-        let event = String::from_utf8_lossy(&(*es[0])).to_string();
-        println!("recv {} event", event);
+      if let Some(&XGithubEvent(ref event)) = req.headers.get::<XGithubEvent>() {
+        println!("recv '{}' event", event);
         let deliver = || {
           let _ = self.deliveries.lock().unwrap().send(Event {
-            name: event,
+            name: event.clone(),
             payload: payload.clone()
           });
         };
         if let Some(ref secret) = self.secret {
-           match req.headers.get_raw("X-Hub-Signature") {
+           match req.headers.get::<XHubSignature>() {
               Some(sig) => {
-                 if Hub::authenticate(&secret, &payload, &(*sig[0])) {
+                 if Hub::authenticate(&secret, &payload, &sig.as_bytes()) {
                    deliver()
                  } else {
                    println!("recv invalid signature for payload");
