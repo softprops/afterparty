@@ -1,0 +1,8 @@
+{
+  "hooks":[
+    {
+      "cmd":"echo \"$GH_EVENT_NAME\": \"$GH_EVENT_PAYLOAD\"",
+      "events":["*"]
+    }
+  ]
+}
