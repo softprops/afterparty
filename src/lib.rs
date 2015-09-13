@@ -13,8 +13,8 @@ use crypto::sha1::Sha1;
 use hook::Hook;
 
 use hyper::server::{Handler, Server, Request, Response};
-use rep::Payload;
-use rustc_serialize::json;
+use rep::{Payload, Ping};
+use rustc_serialize::json::{self, DecodeResult};
 use std::collections::HashMap;
 use std::thread;
 use std::io::Read;
@@ -120,7 +120,12 @@ impl Filter {
       });
     }
     while let Ok(ev) = rx.recv() {
-      match json::decode::<Payload>(&ev.payload) {
+      fn parse_payload(raw: &String) -> DecodeResult<Payload> {
+        json::decode::<Payload>(&raw).or(
+          json::decode::<Ping>(&raw).map(|p|p.hook)
+        )
+      }
+      match parse_payload(&ev.payload) {
         Ok(payload) => {
           println!("rec {} event", ev.name);
           let hooks = self.filter(&ev, &payload);
