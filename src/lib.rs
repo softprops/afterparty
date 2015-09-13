@@ -3,7 +3,7 @@ extern crate crypto;
 #[macro_use] extern crate hyper;
 extern crate rustc_serialize;
 extern crate time;
-
+use rustc_serialize::hex::ToHex;
 pub mod hook;
 pub mod rep;
 
@@ -47,12 +47,12 @@ struct Hub {
 }
 
 impl Hub {
-  pub fn authenticate(secret: &String, payload: &String, signature: &[u8]) -> bool {
+  pub fn authenticate(secret: &String, payload: &String, signature: &String) -> bool {
     let sbytes = secret.as_bytes();
     let pbytes = payload.as_bytes();
     let mut mac = Hmac::new(Sha1::new(), &sbytes);
     mac.input(&pbytes);
-    mac.result().code().to_vec() == signature
+    mac.result().code().to_hex() == str::replace(signature, "sha1=", "")
   }
 }
 
@@ -70,8 +70,9 @@ impl Handler for Hub {
         };
         if let Some(ref secret) = self.secret {
            match req.headers.get::<XHubSignature>() {
-              Some(sig) => {
-                 if Hub::authenticate(&secret, &payload, &sig.as_bytes()) {
+             Some(sig) => {
+                 println!("rec sig {}", sig);
+                 if Hub::authenticate(&secret, &payload, &sig) {
                    deliver()
                  } else {
                    println!("recv invalid signature for payload");
