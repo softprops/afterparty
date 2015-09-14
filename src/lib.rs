@@ -1,4 +1,7 @@
 
+#[macro_use]
+extern crate log;
+
 extern crate crypto;
 #[macro_use] extern crate hyper;
 extern crate rustc_serialize;
@@ -67,7 +70,7 @@ impl Handler for Hub {
     };
     if let Some(&XGithubEvent(ref event)) = headers.get::<XGithubEvent>() {
       if let Ok(_) = req.read_to_string(&mut payload) {
-        println!("recv '{}' event", event);
+        info!("recv '{}' event", event);
         let deliver = || {
           let _ = self.deliveries.lock().unwrap().send(Event {
             delivery: delivery.clone(),
@@ -78,14 +81,13 @@ impl Handler for Hub {
         if let Some(ref secret) = self.secret {
            match headers.get::<XHubSignature>() {
              Some(sig) => {
-                 println!("rec sig {}", sig);
                  if Hub::authenticate(&secret, &payload, &sig) {
                    deliver()
                  } else {
-                   println!("recv invalid signature for payload");
+                   warn!("recv invalid signature for payload");
                  }
               },
-                     _  => println!("recv unsigned request recieved")
+                     _  => warn!("recv unsigned request recieved")
            }
         } else {
           deliver()
@@ -135,15 +137,14 @@ impl Filter {
       }
       match parse_payload(&ev.payload) {
         Ok(payload) => {
-          println!("rec {} event", ev.name);
           let hooks = self.filter(&ev, &payload);
           for h in hooks {
             let name = h.clone().name();
             if let Err(e) = deliveries.get(&name).unwrap().send(ev.clone()) {
-              println!("{} delivery to {} failed: {}", ev.name, name, e.to_string())
+              error!("{} delivery to {} failed: {}", ev.name, name, e.to_string())
             }
           }
-        }, _ => println!("rec unparsable payload {:?}", ev.payload)
+        }, _ => warn!("rec unparsable payload {:?}", ev.payload)
       }
     }
   }

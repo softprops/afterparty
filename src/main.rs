@@ -1,3 +1,7 @@
+#[macro_use]
+extern crate log;
+extern crate env_logger;
+
 extern crate clap;
 extern crate afterparty;
 extern crate rustc_serialize;
@@ -8,6 +12,7 @@ use std::io::Read;
 use rustc_serialize::json;
 
 pub fn main() {
+  env_logger::init().unwrap();
   let matches = App::new("afterparty")
     .about("github webhook server")
     .args_from_usage(
