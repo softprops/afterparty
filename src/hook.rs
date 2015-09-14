@@ -42,12 +42,12 @@ impl Hook {
      }
   }
 
-  fn info<S: Into<String>>(&self, msg: S) {
-    info!("{} {}: {}", time::now().to_utc().rfc3339(), self.name(), msg.into());
+  fn info<S: Into<String>>(&self, delivery: &String, msg: S) {
+    info!("{} {} {}: {}", time::now().to_utc().rfc3339(), delivery, self.name(), msg.into());
   }
 
-  fn err<S: Into<String>>(&self, msg: S) {
-    error!("{} {}: {}", time::now().to_utc().rfc3339(), self.name(), msg.into())
+  fn err<S: Into<String>>(&self, delivery: &String, msg: S) {
+    error!("{} {} {}: {}", time::now().to_utc().rfc3339(), delivery, self.name(), msg.into())
   }
 
 
@@ -88,7 +88,7 @@ impl Hook {
           ()
         },
         Err(e) => {
-          self.err(format!("Recv err: {}\n", e.to_string()));
+          self.err(&"???".to_owned(), format!("Recv err: {}\n", e.to_string()));
           break
         }
       }
@@ -131,7 +131,7 @@ impl Hook {
        .stderr(Stdio::piped())
        .spawn() {
          Err(e) => {
-           self.err(format!("error executing {}: {}\n", self.cmd, e));
+           self.err(&event.delivery, format!("error executing {}: {}\n", self.cmd, e));
            false
          },
          Ok(mut child)  => {
@@ -142,37 +142,37 @@ impl Hook {
 
            match stdout.recv() {
              Ok(Ok(lines)) => for l in lines {
-               self.info(l);
+               self.info(&event.delivery, l);
              },
-             Ok(Err(e))    => self.err(format!("stdout io err {}\n", e)),
-             Err(e)        => self.err(format!("stdout recv err {}\n", e))
+             Ok(Err(e))    => self.err(&event.delivery, format!("stdout io err {}\n", e)),
+             Err(e)        => self.err(&event.delivery, format!("stdout recv err {}\n", e))
            };
 
            match stderr.recv() {
              Ok(Ok(lines)) => for l in lines {
-               self.info(l)
+               self.info(&event.delivery, l)
              },
-             Ok(Err(e))    => self.err(format!("stderr io err {}\n", e)),
-             Err(e)        => self.err(format!("stderr recv err {}\n", e))
+             Ok(Err(e))    => self.err(&event.delivery, format!("stderr io err {}\n", e)),
+             Err(e)        => self.err(&event.delivery, format!("stderr recv err {}\n", e))
            };
 
            match status {
              Ok(s) => {
                if s.success() {
-                 self.info("that worked\n".to_owned());
+                 self.info(&event.delivery, "that worked\n".to_owned());
                  true
                } else {
                  match s.code() {
-                   Some(c) => self.info(format!("hook exited with status {}\n", c)),
+                   Some(c) => self.info(&event.delivery, format!("hook exited with status {}\n", c)),
                    _ => if let Some(s) = s.signal() {
-                     self.err(format!("process killed by signal {}\n", s))
+                     self.err(&event.delivery, format!("process killed by signal {}\n", s))
                    }
                  };
                  false
                }
              },
              Err(e) => {
-               self.err(format!("error getting exit status {}\n", e.to_string()));
+               self.err(&event.delivery, format!("error getting exit status {}\n", e.to_string()));
                false
              }
            }
