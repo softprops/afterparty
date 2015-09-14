@@ -33,7 +33,7 @@ header! {(XHubSignature, "X-Hub-Signature") => [String]}
 header! {(XGithubEvent, "X-Github-Event") => [String]}
 
 /// unique id for each delivery
-header! {(XGithubDelivery, "X-Github-Deliver") => [String]}
+header! {(XGithubDelivery, "X-Github-Delivery") => [String]}
 
 /// Raw, unparsed representation of an inbound github event
 #[derive(Clone, Debug, Default)]
@@ -47,7 +47,7 @@ pub struct Event {
 struct Hub {
   secret: Option<String>,
   deliveries: Mutex<Sender<Event>>,
-  hooks: Vec<Hook>
+  pub hooks: Vec<Hook>
 }
 
 impl Hub {
