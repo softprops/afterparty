@@ -35,6 +35,7 @@ header! {(XGithubDelivery, "X-Github-Deliver") => [String]}
 /// Raw, unparsed representation of an inbound github event
 #[derive(Clone, Debug, Default)]
 pub struct Event {
+  pub delivery: String,
   pub name: String,
   pub payload: String
 }
@@ -59,17 +60,23 @@ impl Hub {
 impl Handler for Hub {
   fn handle(&self, mut req: Request, res: Response) {
     let mut payload = String::new();
-    if let Ok(_) = req.read_to_string(&mut payload) {
-      if let Some(&XGithubEvent(ref event)) = req.headers.get::<XGithubEvent>() {
+    let headers = req.headers.clone();
+    let delivery = match headers.get::<XGithubDelivery>() {
+      Some(&XGithubDelivery(ref delivery)) => delivery.clone(),
+      _ => "".to_owned()
+    };
+    if let Some(&XGithubEvent(ref event)) = headers.get::<XGithubEvent>() {
+      if let Ok(_) = req.read_to_string(&mut payload) {
         println!("recv '{}' event", event);
         let deliver = || {
           let _ = self.deliveries.lock().unwrap().send(Event {
+            delivery: delivery.clone(),
             name: event.clone(),
             payload: payload.clone()
           });
         };
         if let Some(ref secret) = self.secret {
-           match req.headers.get::<XHubSignature>() {
+           match headers.get::<XHubSignature>() {
              Some(sig) => {
                  println!("rec sig {}", sig);
                  if Hub::authenticate(&secret, &payload, &sig) {

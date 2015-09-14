@@ -125,6 +125,7 @@ impl Hook {
      match Command::new("/bin/sh")
        .arg("-c")
        .arg(&self.cmd)
+       .env("GH_DELIVERY", &event.delivery)
        .env("GH_EVENT_NAME", &event.name)
        .env("GH_EVENT_PAYLOAD", &event.payload)
        .stdin(Stdio::null())
