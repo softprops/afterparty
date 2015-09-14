@@ -1,4 +1,5 @@
 use time;
+use std::fmt;
 use std::io;
 use std::io::BufReader;
 use std::io::prelude::*;
@@ -30,6 +31,30 @@ pub struct Hook {
   pub sender: Option<String>
 }
 
+struct Log {
+  timestamp: String,
+  src: String,
+  delivery: String,
+  message: String
+}
+
+impl Log {
+  fn new<S: Into<String>>(src: &String, delivery: &String, message: S) -> Log {
+    Log {
+      timestamp: time::now().to_utc().rfc3339().to_string(),
+      src: src.clone(),
+      delivery: delivery.clone(),
+      message: message.into()
+    }
+  }
+}
+
+impl fmt::Display for Log {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    write!(f, "{} {} {} {}", self.timestamp, self.src, self.delivery, self.message)
+  }
+}
+
 impl Hook {
 
   /// return a debug hook that targets all events
@@ -41,15 +66,6 @@ impl Hook {
        ..Default::default()
      }
   }
-
-  fn info<S: Into<String>>(&self, delivery: &String, msg: S) {
-    info!("{} {} {}: {}", time::now().to_utc().rfc3339(), delivery, self.name(), msg.into());
-  }
-
-  fn err<S: Into<String>>(&self, delivery: &String, msg: S) {
-    error!("{} {} {}: {}", time::now().to_utc().rfc3339(), delivery, self.name(), msg.into())
-  }
-
 
   /// return true if this hook targets the provided
   /// event name, false otherwise
@@ -88,11 +104,15 @@ impl Hook {
           ()
         },
         Err(e) => {
-          self.err(&"???".to_owned(), format!("Recv err: {}\n", e.to_string()));
+          error!("{}", Log::new(&"-".to_owned(), &"-".to_owned(), format!("Recv err: {}\n", e.to_string())));
           break
         }
       }
     }
+  }
+
+  fn log<S: Into<String>>(&self, event: &Event, msg: S) -> Log {
+    Log::new(&self.name(), &event.delivery, msg)
   }
 
   /// run hook cmd, returning true if cmd succeeded, otherwise false
@@ -131,7 +151,11 @@ impl Hook {
        .stderr(Stdio::piped())
        .spawn() {
          Err(e) => {
-           self.err(&event.delivery, format!("error executing {}: {}\n", self.cmd, e));
+           error!(
+             "{}", &self.log(
+               &event, format!("error executing {}: {}\n", self.cmd, e)
+              )
+           );
            false
          },
          Ok(mut child)  => {
@@ -142,37 +166,37 @@ impl Hook {
 
            match stdout.recv() {
              Ok(Ok(lines)) => for l in lines {
-               self.info(&event.delivery, l);
+               info!("{}", self.log(&event, l));
              },
-             Ok(Err(e))    => self.err(&event.delivery, format!("stdout io err {}\n", e)),
-             Err(e)        => self.err(&event.delivery, format!("stdout recv err {}\n", e))
+             Ok(Err(e))    => error!("{}", self.log(&event, format!("stdout io err {}\n", e))),
+             Err(e)        => error!("{}", self.log(&event, format!("stdout recv err {}\n", e)))
            };
 
            match stderr.recv() {
              Ok(Ok(lines)) => for l in lines {
-               self.info(&event.delivery, l)
+               info!("{}", self.log(&event, l))
              },
-             Ok(Err(e))    => self.err(&event.delivery, format!("stderr io err {}\n", e)),
-             Err(e)        => self.err(&event.delivery, format!("stderr recv err {}\n", e))
+             Ok(Err(e))    => error!("{}", self.log(&event, format!("stderr io err {}\n", e))),
+             Err(e)        => error!("{}", self.log(&event, format!("stderr recv err {}\n", e)))
            };
 
            match status {
              Ok(s) => {
                if s.success() {
-                 self.info(&event.delivery, "that worked\n".to_owned());
+                 info!("{}", self.log(&event, "that worked"));
                  true
                } else {
                  match s.code() {
-                   Some(c) => self.info(&event.delivery, format!("hook exited with status {}\n", c)),
+                   Some(c) => info!("{}", self.log(&event, format!("hook exited with status {}\n", c))),
                    _ => if let Some(s) = s.signal() {
-                     self.err(&event.delivery, format!("process killed by signal {}\n", s))
+                     error!("{}", self.log(&event, format!("process killed by signal {}\n", s)))
                    }
                  };
                  false
                }
              },
              Err(e) => {
-               self.err(&event.delivery, format!("error getting exit status {}\n", e.to_string()));
+               error!("{}", self.log(&event, format!("error getting exit status {}\n", e.to_string())));
                false
              }
            }
