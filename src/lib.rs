@@ -46,8 +46,7 @@ pub struct Event {
 /// A hub is a handler for github event requests
 struct Hub {
   secret: Option<String>,
-  deliveries: Mutex<Sender<Event>>,
-  pub hooks: Vec<Hook>
+  deliveries: Mutex<Sender<Event>>
 }
 
 impl Hub {
@@ -64,11 +63,8 @@ impl Handler for Hub {
   fn handle(&self, mut req: Request, res: Response) {
     let mut payload = String::new();
     let headers = req.headers.clone();
-    let delivery = match headers.get::<XGithubDelivery>() {
-      Some(&XGithubDelivery(ref delivery)) => delivery.clone(),
-      _ => "".to_owned()
-    };
-    if let Some(&XGithubEvent(ref event)) = headers.get::<XGithubEvent>() {
+    if let (Some(&XGithubEvent(ref event)), Some(&XGithubDelivery(ref delivery))) =
+           (headers.get::<XGithubEvent>(), headers.get::<XGithubDelivery>()) {
       if let Ok(_) = req.read_to_string(&mut payload) {
         info!("recv '{}' event", event);
         let deliver = || {
@@ -182,8 +178,7 @@ impl Service {
     let srvc = Server::http(&addr[..]).unwrap()
       .handle(Hub {
          secret: self.secret,
-         deliveries: Mutex::new(tx),
-         hooks: self.hooks
+         deliveries: Mutex::new(tx)
       });
     println!("listening on {}", addr);
     srvc.unwrap();
