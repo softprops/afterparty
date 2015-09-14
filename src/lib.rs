@@ -80,10 +80,14 @@ impl Handler for Hub {
                  if Hub::authenticate(&secret, &payload, &sig) {
                    deliver()
                  } else {
-                   warn!("recv invalid signature for payload");
+                   warn!(
+                     "recv invalid signature for delivery {} ({})", delivery, event
+                   );
                  }
               },
-                     _  => warn!("recv unsigned request recieved")
+             _  => warn!(
+               "unsigned request for delivery {} ({})", delivery, event
+             )
            }
         } else {
           deliver()
