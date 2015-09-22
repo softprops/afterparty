@@ -1,3 +1,4 @@
+extern crate pines;
 use time;
 use std::fmt;
 use std::io;
@@ -160,25 +161,11 @@ impl Hook {
          },
          Ok(mut child)  => {
 
-           let stdout = collect(child.stdout.take());
-           let stderr = collect(child.stderr.take());
+           let lines = pines::lines(&mut child);
            let status = child.wait();
-
-           match stdout.recv() {
-             Ok(Ok(lines)) => for l in lines {
-               info!("{}", self.log(&event, l));
-             },
-             Ok(Err(e))    => error!("{}", self.log(&event, format!("stdout io err {}\n", e))),
-             Err(e)        => error!("{}", self.log(&event, format!("stdout recv err {}\n", e)))
-           };
-
-           match stderr.recv() {
-             Ok(Ok(lines)) => for l in lines {
-               info!("{}", self.log(&event, l))
-             },
-             Ok(Err(e))    => error!("{}", self.log(&event, format!("stderr io err {}\n", e))),
-             Err(e)        => error!("{}", self.log(&event, format!("stderr recv err {}\n", e)))
-           };
+           for l in lines.iter() {
+             info!("{}", self.log(&event, format!("{:?}", l)));
+           }
 
            match status {
              Ok(s) => {

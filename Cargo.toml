@@ -18,6 +18,9 @@ time = "0.1"
 log = "0.3"
 env_logger = "0.3"
 
+[dependencies.pines]
+git = "https://github.com/softprops/pines.git"
+
 [[bin]]
 doc = false
 name = "afterparty"
