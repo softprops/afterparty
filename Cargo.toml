@@ -17,9 +17,7 @@ rustc-serialize = "0.3"
 time = "0.1"
 log = "0.3"
 env_logger = "0.3"
-
-[dependencies.pines]
-git = "https://github.com/softprops/pines.git"
+pine = "0.1"
 
 [[bin]]
 doc = false

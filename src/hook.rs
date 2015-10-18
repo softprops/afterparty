@@ -1,13 +1,11 @@
-extern crate pines;
+extern crate pine;
+
 use time;
 use std::fmt;
-use std::io;
-use std::io::BufReader;
 use std::io::prelude::*;
 use std::os::unix::prelude::*;
 use std::process::{Command, Stdio};
-use std::sync::mpsc::{channel, Receiver};
-use std::thread;
+use std::sync::mpsc::Receiver;
 use super::Event;
 use super::rep::Payload;
 
@@ -119,28 +117,6 @@ impl Hook {
   /// run hook cmd, returning true if cmd succeeded, otherwise false
   pub fn run(&self, event: &Event) -> bool {
 
-     fn collect<T: Read + Send + 'static>(stm: Option<T>) ->
-       Receiver<io::Result<Vec<String>>> {
-       let (tx, rx) = channel();
-       if let Some(s) = stm {
-         thread::spawn(move || {
-           let mut buf = BufReader::with_capacity(64, s);
-           let mut lines: Vec<String> = Vec::new();
-           loop {
-             let mut line = String::new();
-             match buf.read_line(&mut line) {
-                Ok(0) | Err(_)  => break,
-                Ok(_)  => lines.push(line)
-             }
-           }
-           tx.send(Ok(lines)).unwrap()
-         });
-       } else {
-         tx.send(Ok(vec![])).unwrap();
-       }
-       rx
-     }
-
      match Command::new("/bin/sh")
        .arg("-c")
        .arg(&self.cmd)
@@ -161,7 +137,7 @@ impl Hook {
          },
          Ok(mut child)  => {
 
-           let lines = pines::lines(&mut child);
+           let lines = pine::lines(&mut child);
            let status = child.wait();
            for l in lines.iter() {
              info!("{}", self.log(&event, format!("{:?}", l)));
