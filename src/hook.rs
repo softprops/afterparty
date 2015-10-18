@@ -138,12 +138,11 @@ impl Hook {
          Ok(mut child)  => {
 
            let lines = pine::lines(&mut child);
-           let status = child.wait();
            for l in lines.iter() {
              info!("{}", self.log(&event, format!("{:?}", l)));
            }
 
-           match status {
+           match child.wait() {
              Ok(s) => {
                if s.success() {
                  info!("{}", self.log(&event, "that worked"));
