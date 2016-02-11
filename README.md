@@ -10,15 +10,32 @@ Find them [here](http://softprops.github.io/afterparty)
 
 # usage
 
-```shell
-$ cat afterparty.json
-{
-  "hooks": [{
-    "cmd": "echo \"hit with $GH_EVENT_NAME : $GH_EVENT_PAYLOAD\"",
-    "events": ["push"]
-  }]
+Afterparty has to key abstractions a `Hook`, a handler of webhook deliveries, and a `Hub`, a registry for hooks. A `Hub` delivers `Deliveries` to interested hooks.
+
+A `Delivery` encodes all relevant webhook request information including a unique identifier for the delivery, the event name, and typed payload of represented as an enumerated type of `Event`.
+
+Hubs implements hyper's Server Handler trait so that it may be mounted into any hyper Server.
+
+```rust
+extern crate afterparty;
+extern create hyper;
+
+use hyper::Server;
+use afterparty::{Delivery, Hub};
+
+fn main() {
+    let mut hub = Hub::new();
+    hub.handle("*", |delivery: &Delivery| {
+        println!("rec delivery {:#?}", delivery)
+    });
+    hub.handle_authenticated("push", "secret", |delivery: &Delivery| {
+       println!("rec authenticated delivery {:#?}", delivery)
+    });
+    let svc = Server::http("0.0.0.0:4567")
+       .handle(hub)
+    println!("hub is up");
+    srv.unwrap();
 }
-$ afterparty  afterparty.json
 ```
 
 ## building

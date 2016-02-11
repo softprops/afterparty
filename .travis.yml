@@ -8,7 +8,6 @@ matrix:
 script:
   - cargo build
   - cargo test
-  - cargo bench
   - cargo doc
 after_success: |
   [ $TRAVIS_RUST_VERSION = stable ] &&

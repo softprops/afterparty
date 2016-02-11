@@ -27,7 +27,7 @@ header! {(XGithubEvent, "X-Github-Event") => [String]}
 header! {(XGithubDelivery, "X-Github-Delivery") => [String]}
 
 /// A delivery encodes all information about web hook request
-//#[derive(Default)] default Event?
+#[derive(Debug)]
 pub struct Delivery<'a> {
     pub id: &'a str,
     pub event: &'a str,
@@ -53,7 +53,7 @@ impl<'a> Delivery<'a> {
     }
 }
 
-/// A hub is a handler for github event requests
+/// A hub is a registry of hooks
 #[derive(Default)]
 pub struct Hub {
     hooks: HashMap<String, Vec<Box<Hook>>>,
@@ -68,16 +68,16 @@ impl Hub {
     /// adds a new web hook which will only be applied
     /// when a delivery is revcieved with a valid
     /// request signature
-    pub fn authenticated<H, S>(&mut self, event: &str, secret: S, hook: H)
+    pub fn handle_authenticated<H, S>(&mut self, event: &str, secret: S, hook: H)
         where H: Hook + 'static,
               S: Into<String>
     {
-        self.add(event, AuthenticateHook::new(secret, hook))
+        self.handle(event, AuthenticateHook::new(secret, hook))
     }
 
     /// add a need hook to list of hooks
     /// interested in a given event
-    pub fn add<H>(&mut self, event: &str, hook: H)
+    pub fn handle<H>(&mut self, event: &str, hook: H)
         where H: Hook + 'static
     {
         self.hooks
@@ -104,7 +104,7 @@ impl Hub {
 
     /// serially handles delivery by applying each
     /// interested hook
-    pub fn handle(&self, delivery: &Delivery) {
+    pub fn deliver(&self, delivery: &Delivery) {
         if let Some(hooks) = self.hooks(delivery.event) {
             for hook in hooks {
                 hook.handle(&delivery)
@@ -124,7 +124,7 @@ impl Handler for Hub {
                 let signature = headers.get::<XHubSignature>();
                 info!("recv '{}' event with signature '{:?}'", event, signature);
                 match Delivery::new(delivery, event, payload.as_ref(), signature.map(|s| s.as_ref())) {
-                    Some(delivery) => self.handle(&delivery),
+                    Some(delivery) => self.deliver(&delivery),
                     _ => error!("failed to parse event {:?} for delivery {:?}",
                                 event,
                                 delivery)
@@ -143,8 +143,8 @@ mod tests {
     #[test]
     fn hub_hooks() {
         let mut hub = Hub::new();
-        hub.add("push", |_: &Delivery| {});
-        hub.add("*", |_: &Delivery| {});
+        hub.handle("push", |_: &Delivery| {});
+        hub.handle("*", |_: &Delivery| {});
         assert_eq!(Some(2),
                    hub.hooks("push").map(|hooks| hooks.into_iter().count()))
     }
