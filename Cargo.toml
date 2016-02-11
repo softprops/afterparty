@@ -8,6 +8,12 @@ homepage = "https://github.com/softprops/afterparty"
 repository = "https://github.com/softprops/afterparty"
 keywords = ["github", "ci", "webhook"]
 license = "MIT"
+build = "build.rs"
+
+[build-dependencies]
+hyper = "0.6"
+rustc-serialize = "0.3"
+case = "*"
 
 [dependencies]
 clap = "1.0"
