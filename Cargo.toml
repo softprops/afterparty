@@ -22,7 +22,3 @@ rust-crypto = "0.2"
 rustc-serialize = "0.3"
 log = "0.3"
 env_logger = "0.3"
-
-[[bin]]
-doc = false
-name = "afterparty"
