@@ -1,3 +1,5 @@
+//! Afterparty is a github webhook handler library for building custom integrations
+
 #[macro_use]
 extern crate log;
 #[macro_use]
