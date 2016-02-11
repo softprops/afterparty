@@ -6,7 +6,6 @@ extern crate crypto;
 extern crate rustc_serialize;
 
 mod hook;
-mod rep;
 mod events;
 
 pub use events::Event;
@@ -28,6 +27,7 @@ header! {(XGithubEvent, "X-Github-Event") => [String]}
 header! {(XGithubDelivery, "X-Github-Delivery") => [String]}
 
 /// A delivery encodes all information about web hook request
+//#[derive(Default)] default Event?
 pub struct Delivery<'a> {
     pub id: &'a str,
     pub event: &'a str,
@@ -48,7 +48,7 @@ impl Hub {
         Hub { ..Default::default() }
     }
 
-    pub fn authenicated<H, S>(&mut self, event: &str, secret: S, hook: H)
+    pub fn authenticated<H, S>(&mut self, event: &str, secret: S, hook: H)
         where H: Hook + 'static,
               S: Into<String>
     {
