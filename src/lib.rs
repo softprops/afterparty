@@ -36,6 +36,23 @@ pub struct Delivery<'a> {
     pub signature: Option<&'a str>,
 }
 
+impl<'a> Delivery<'a> {
+    pub fn new(id: &'a str, event: &'a str, payload: &'a str, signature: Option<&'a str>) -> Option<Delivery<'a>>  {
+        match json::decode::<Event>(&payload) {
+            Ok(parsed) => {
+                Some(Delivery {
+                    id: id,
+                    event: event,
+                    payload: parsed,
+                    unparsed_payload: payload,
+                    signature: signature
+                })
+            },
+            _ => None
+        }
+    }
+}
+
 /// A hub is a handler for github event requests
 #[derive(Default)]
 pub struct Hub {
@@ -48,6 +65,9 @@ impl Hub {
         Hub { ..Default::default() }
     }
 
+    /// adds a new web hook which will only be applied
+    /// when a delivery is revcieved with a valid
+    /// request signature
     pub fn authenticated<H, S>(&mut self, event: &str, secret: S, hook: H)
         where H: Hook + 'static,
               S: Into<String>
@@ -55,7 +75,8 @@ impl Hub {
         self.add(event, AuthenticateHook::new(secret, hook))
     }
 
-    /// add a need hook registered to event type
+    /// add a need hook to list of hooks
+    /// interested in a given event
     pub fn add<H>(&mut self, event: &str, hook: H)
         where H: Hook + 'static
     {
@@ -80,6 +101,16 @@ impl Hub {
         combined
 
     }
+
+    /// serially handles delivery by applying each
+    /// interested hook
+    pub fn handle(&self, delivery: &Delivery) {
+        if let Some(hooks) = self.hooks(delivery.event) {
+            for hook in hooks {
+                hook.handle(&delivery)
+            }
+        }
+    }
 }
 
 impl Handler for Hub {
@@ -90,28 +121,13 @@ impl Handler for Hub {
                 Some(&XGithubDelivery(ref delivery))) = (headers.get::<XGithubEvent>(),
                                                          headers.get::<XGithubDelivery>()) {
             if let Ok(_) = req.read_to_string(&mut payload) {
-                match json::decode::<Event>(&payload) {
-                    Ok(parsed) => {
-                        let signature = headers.get::<XHubSignature>();
-                        info!("recv '{}' event with signature '{:?}'", event, signature);
-                        let delivery = Delivery {
-                            id: delivery,
-                            event: event,
-                            payload: parsed,
-                            unparsed_payload: payload.as_ref(),
-                            signature: signature.map(|s| s.as_ref()),
-                        };
-                        if let Some(hooks) = self.hooks(event) {
-                            for hook in hooks {
-                                hook.handle(&delivery)
-                            }
-                        }
-                    }
-                    _ => {
-                        error!("failed to parse event {:?} for delivery {:?}",
-                               event,
-                               delivery)
-                    }
+                let signature = headers.get::<XHubSignature>();
+                info!("recv '{}' event with signature '{:?}'", event, signature);
+                match Delivery::new(delivery, event, payload.as_ref(), signature.map(|s| s.as_ref())) {
+                    Some(delivery) => self.handle(&delivery),
+                    _ => error!("failed to parse event {:?} for delivery {:?}",
+                                event,
+                                delivery)
                 }
             }
         }
