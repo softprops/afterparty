@@ -15,10 +15,12 @@ hyper = "0.6"
 rustc-serialize = "0.3"
 case = "*"
 
+[dev-dependencies]
+env_logger = "0.3"
+
 [dependencies]
 clap = "1.0"
 hyper = "0.6"
 rust-crypto = "0.2"
 rustc-serialize = "0.3"
 log = "0.3"
-env_logger = "0.3"
