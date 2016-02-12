@@ -6,7 +6,7 @@ extern crate clap;
 extern crate afterparty;
 extern crate hyper;
 
-use afterparty::{Delivery, Hub};
+use afterparty::{Event, Delivery, Hub};
 use clap::App;
 use hyper::Server;
 
@@ -18,8 +18,12 @@ pub fn main() {
         .get_matches();
     let addr = format!("0.0.0.0:{}", 4567);
     let mut hub = Hub::new();
-    hub.handle("*", |delivery: &Delivery| {
-        println!("rec delivery {:?}", delivery)
+    hub.handle("pull_request", |delivery: &Delivery| {
+        println!("rec delivery {:?}", delivery);
+        match delivery.payload {
+            Event::PullRequest { .. } => (),
+            _ => ()
+        }
     });
     let srvc = Server::http(&addr[..]).unwrap()
         .handle(hub);
