@@ -4,7 +4,7 @@ use crypto::mac::Mac;
 use crypto::hmac::Hmac;
 use crypto::sha1::Sha1;
 
-/// H handles webhook deliveries
+/// Handles webhook deliveries
 pub trait Hook: Send + Sync {
     /// Implementations are expected to deliveries here
     fn handle(&self, delivery: &Delivery);
