@@ -39,9 +39,9 @@ fn main() {
                       "watch"];
 
     if let Ok(_) = env::var("FETCH_PAYLOAD_DATA") {
-        let _ = fetch_payload_data(&events);
+        fetch_payload_data(&events).unwrap();
     }
-    let _ = generate(&events);
+    generate(&events).unwrap();
 }
 
 fn fetch_payload_data(events: &Vec<&str>) -> Result<()> {
@@ -67,37 +67,26 @@ fn generate(events: &Vec<&str>) -> Result<()> {
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("events.rs");
     let mut f = try!(File::create(&dest_path));
-    let client = Client::new();
 
-    // generate Event enum containing definitions each hook struct definition
-    try!(f.write_all(b"#[derive(Debug, RustcDecodable)]
+    try!(f.write_all(b"/// An enumeration of possible github events
+#[derive(Debug, RustcDecodable)]
 pub enum Event {
 "));
     let mut defs = HashMap::new();
     for event in events {
-        let src = format!("https://raw.githubusercontent.com/github/developer.github.\
-                           com/master/lib/webhooks/{}.payload.json",
-                          event);
-        let mut res = client.get(&src)
-                            .send()
-                            .unwrap();
+        let mut data = try!(File::open(format!("data/{}.json", event)));
         let mut buf = String::new();
-        try!(res.read_to_string(&mut buf));
+        try!(data.read_to_string(&mut buf));
         let parsed = Json::from_str(&buf).unwrap();
         let enum_name = container_name(event);
-        try!(f.write_all(format!("  /// generated from {}
-  {} ",
-                                 src,
-                                 enum_name)
-                             .as_bytes()));
-        try!(f.write_all(b"{
- "));
+        try!(f.write_all(format!("  {} ", enum_name).as_bytes()));
+        try!(f.write_all(b"{"));
 
         match parsed {
             Json::Object(obj) => {
                 for (k, v) in obj {
-                    try!(f.write_all(format!("   {}: {},
- ",
+                    try!(f.write_all(format!("
+    {}: {},",
                                              field_name(&k),
                                              value(&enum_name, &mut defs, &k, &v))
                                          .as_bytes()))
@@ -106,7 +95,8 @@ pub enum Event {
             _ => (),
         }
         try!(f.write_all(b"
-  },"));
+  },
+"));
     }
     try!(f.write_all(b"}
 
