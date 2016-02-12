@@ -44,12 +44,4 @@ fn main() {
 }
 ```
 
-## building
-
-* build a release binary
-
-```bash
-$ docker run -it --rm -v $(pwd):/source jimmycuadra/rust:1.2.0
-cargo build --release
-exit
-```
+Doug Tangren (softprops) 2015-2016
