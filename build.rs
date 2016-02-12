@@ -8,15 +8,22 @@ use rustc_serialize::json::Json;
 use hyper::Client;
 use std::env;
 use std::fs::File;
-use std::io::{Read, Write};
+use std::io::{Result, Read, Write};
 use std::path::Path;
+
 
 /// generate an enum of Events
 fn main() {
-    return;
+    if let Ok(_) = env::var("AFTERPARTY_SKIP_GENERATE") {
+        return;
+    }
+    let _ = generate();
+}
+
+fn generate() -> Result<()> {
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("events.rs");
-    let mut f = File::create(&dest_path).unwrap();
+    let mut f = try!(File::create(&dest_path));
     let events = vec!["commit_comment",
                       "create",
                       "delete",
@@ -42,10 +49,9 @@ fn main() {
     let client = Client::new();
 
     // generate Event enum containing definitions each hook struct definition
-    f.write_all(b"#[derive(Debug, RustcDecodable)]
+    try!(f.write_all(b"#[derive(Debug, RustcDecodable)]
 pub enum Event {
-")
-     .unwrap();
+"));
     let mut defs = HashMap::new();
     for event in events {
         let src = format!("https://raw.githubusercontent.com/github/developer.github.\
@@ -55,84 +61,79 @@ pub enum Event {
                             .send()
                             .unwrap();
         let mut buf = String::new();
-        res.read_to_string(&mut buf).unwrap();
+        try!(res.read_to_string(&mut buf));
         let parsed = Json::from_str(&buf).unwrap();
         let enum_name = container_name(event);
-        f.write_all(format!("  /// generated from {}
+        try!(f.write_all(format!("  /// generated from {}
   {} ",
-                            src,
-                            enum_name)
-                        .as_bytes())
-         .unwrap();
-        f.write_all(b"{
- ")
-         .unwrap();
-
+                                 src,
+                                 enum_name)
+                             .as_bytes()));
+        try!(f.write_all(b"{
+ "));
 
         match parsed {
             Json::Object(obj) => {
                 for (k, v) in obj {
-                    f.write_all(format!("   {}: {},
+                    try!(f.write_all(format!("   {}: {},
  ",
-                                        field_name(&k),
-                                        value(&enum_name, &mut defs, &k, &v))
-                                    .as_bytes())
-                     .unwrap()
+                                             field_name(&k),
+                                             value(&enum_name, &mut defs, &k, &v))
+                                         .as_bytes()))
                 }
             }
             _ => (),
         }
-        f.write_all(b"
-  },")
-         .unwrap();
+        try!(f.write_all(b"
+  },"));
     }
-    f.write_all(b"}
+    try!(f.write_all(b"}
 
-")
-     .unwrap();
+"));
 
-    print_structs(&mut f, defs, &mut vec![], 0);
-
+    try!(print_structs(&mut f, defs, &mut vec![], 0));
+    Ok(())
 }
 
-fn print_structs(f: &mut File, defs: HashMap<String, Json>, generated: &mut Vec<String>, depth: usize) {
+fn print_structs(f: &mut File,
+                 defs: HashMap<String, Json>,
+                 generated: &mut Vec<String>,
+                 depth: usize)
+                 -> Result<()> {
     let mut aux = HashMap::new();
     for (struct_name, json) in defs.iter() {
         if generated.contains(&struct_name) {
-            continue
+            continue;
         }
         println!("struct {}", struct_name);
-        f.write_all(format!("
+        try!(f.write_all(format!("
 #[derive(Default, Debug, RustcDecodable)]
 pub struct {} ",
-                            struct_name)
-                        .as_bytes())
-         .unwrap();
-        f.write_all(b"{")
-         .unwrap();
+                                 struct_name)
+                             .as_bytes()));
+        try!(f.write_all(b"{"));
         match json {
             &Json::Object(ref obj) => {
                 for (k, v) in obj {
-                    f.write_all(format!("
+                    try!(f.write_all(format!("
   pub {}: {},",
-                                        field_name(&k),
-                                        value(&struct_name, &mut aux, &k, &v))
-                                    .as_bytes())
-                     .unwrap()
+                                             field_name(&k),
+                                             value(&struct_name, &mut aux, &k, &v))
+                                         .as_bytes()))
                 }
             }
             _ => (),
         }
 
-        f.write_all(b"
+        try!(f.write_all(b"
 }
-")
-         .unwrap();
+"));
         generated.push(struct_name.clone());
     }
     if !aux.is_empty() {
-        print_structs(f, aux, generated, depth + 1);
+        try!(print_structs(f, aux, generated, depth + 1));
     }
+    Ok(())
 }
 
 fn value(container: &String, defs: &mut HashMap<String, Json>, k: &str, j: &Json) -> String {
@@ -155,7 +156,7 @@ fn value(container: &String, defs: &mut HashMap<String, Json>, k: &str, j: &Json
             } else {
                 let struct_name = match container_name(k) {
                     ref recursive if recursive == container => format!("{}Inner", recursive),
-                    valid => valid
+                    valid => valid,
                 };
                 defs.insert(struct_name.clone(), obj.clone());
                 struct_name
