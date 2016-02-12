@@ -41,6 +41,9 @@ fn main() {
     if let Ok(_) = env::var("FETCH_PAYLOAD_DATA") {
         fetch_payload_data(&events).unwrap();
     }
+    if let Ok(_) = env::var("SKIP_GENERATE") {
+        return;
+    }
     generate(&events).unwrap();
 }
 

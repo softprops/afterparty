@@ -21,15 +21,21 @@ extern crate afterparty;
 extern create hyper;
 
 use hyper::Server;
-use afterparty::{Delivery, Hub};
+use afterparty::{Delivery, Event, Hub};
 
 fn main() {
     let mut hub = Hub::new();
     hub.handle("*", |delivery: &Delivery| {
         println!("rec delivery {:#?}", delivery)
     });
-    hub.handle_authenticated("push", "secret", |delivery: &Delivery| {
-       println!("rec authenticated delivery {:#?}", delivery)
+    hub.handle_authenticated("pull_request", "secret", |delivery: &Delivery| {
+       println!("rec authenticated delivery");
+       match delivery.payload {
+           Event::PullRequest { ref action, ref sender, .. } => {
+               println!("sender {} action {}", sender.login, action)
+           },
+           _ => ()
+       }
     });
     let svc = Server::http("0.0.0.0:4567")
        .handle(hub)

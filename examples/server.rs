@@ -19,9 +19,11 @@ pub fn main() {
     let addr = format!("0.0.0.0:{}", 4567);
     let mut hub = Hub::new();
     hub.handle("pull_request", |delivery: &Delivery| {
-        println!("rec delivery {:?}", delivery);
+        println!("rec delivery {:#?}", delivery);
         match delivery.payload {
-            Event::PullRequest { .. } => (),
+            Event::PullRequest { ref action, ref sender, .. } => {
+                println!("sender {} action {}", sender.login, action)
+            },
             _ => ()
         }
     });
