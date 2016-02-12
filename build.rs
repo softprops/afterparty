@@ -14,16 +14,7 @@ use std::path::Path;
 
 /// generate an enum of Events
 fn main() {
-    if let Ok(_) = env::var("AFTERPARTY_SKIP_GENERATE") {
-        return;
-    }
-    let _ = generate();
-}
 
-fn generate() -> Result<()> {
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("events.rs");
-    let mut f = try!(File::create(&dest_path));
     let events = vec!["commit_comment",
                       "create",
                       "delete",
@@ -46,6 +37,36 @@ fn generate() -> Result<()> {
                       "status",
                       "team_add",
                       "watch"];
+
+    if let Ok(_) = env::var("FETCH_PAYLOAD_DATA") {
+        let _ = fetch_payload_data(&events);
+    }
+    let _ = generate(&events);
+}
+
+fn fetch_payload_data(events: &Vec<&str>) -> Result<()> {
+    let data_dir = Path::new("data");
+    let client = Client::new();
+    for event in events {
+        let src = format!("https://raw.githubusercontent.com/github/developer.github.\
+                           com/master/lib/webhooks/{}.payload.json",
+                          event);
+        let mut res = client.get(&src)
+                            .send()
+                            .unwrap();
+        let mut buf = String::new();
+        try!(res.read_to_string(&mut buf));
+        let outfile = data_dir.join(format!("{}.json", event));
+        let mut f = try!(File::create(outfile));
+        try!(f.write_all(buf.as_bytes()));
+    }
+    Ok(())
+}
+
+fn generate(events: &Vec<&str>) -> Result<()> {
+    let out_dir = env::var("OUT_DIR").unwrap();
+    let dest_path = Path::new(&out_dir).join("events.rs");
+    let mut f = try!(File::create(&dest_path));
     let client = Client::new();
 
     // generate Event enum containing definitions each hook struct definition
