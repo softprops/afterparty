@@ -2,7 +2,7 @@ extern crate case;
 extern crate hyper;
 extern crate rustc_serialize;
 
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use case::CaseExt;
 use rustc_serialize::json::Json;
 use hyper::Client;
@@ -72,7 +72,7 @@ fn generate(events: &Vec<&str>) -> Result<()> {
 #[derive(Debug, RustcDecodable)]
 pub enum Event {
 "));
-    let mut defs = HashMap::new();
+    let mut defs = BTreeMap::new();
     for event in events {
         let mut data = try!(File::open(format!("data/{}.json", event)));
         let mut buf = String::new();
@@ -107,11 +107,11 @@ pub enum Event {
 }
 
 fn print_structs(f: &mut File,
-                 defs: HashMap<String, Json>,
+                 defs: BTreeMap<String, Json>,
                  generated: &mut Vec<String>,
                  depth: usize)
                  -> Result<()> {
-    let mut aux = HashMap::new();
+    let mut aux = BTreeMap::new();
     for (struct_name, json) in defs.iter() {
         if generated.contains(&struct_name) {
             continue;
@@ -147,7 +147,7 @@ pub struct {} ",
     Ok(())
 }
 
-fn value(container: &String, defs: &mut HashMap<String, Json>, k: &str, j: &Json) -> String {
+fn value(container: &String, defs: &mut BTreeMap<String, Json>, k: &str, j: &Json) -> String {
     match j {
         &Json::I64(_) => "i64".to_owned(),
         &Json::U64(_) => "u64".to_owned(),
