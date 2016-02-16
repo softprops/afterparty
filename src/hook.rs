@@ -1,4 +1,3 @@
-//use rustc_serialize::hex::ToHex;
 use super::Delivery;
 use crypto::mac::Mac;
 use crypto::hmac::Hmac;
@@ -6,6 +5,17 @@ use crypto::sha1::Sha1;
 
 // fixme: borrowed from rustc, may exist somewhere in serde
 static CHARS: &'static[u8] = b"0123456789abcdef";
+pub fn to_hex(bs: &[u8]) -> String {
+    let mut v = Vec::with_capacity(bs.len() * 2);
+    for &byte in bs.iter() {
+        v.push(CHARS[(byte >> 4) as usize]);
+        v.push(CHARS[(byte & 0xf) as usize]);
+    }
+
+    unsafe {
+        String::from_utf8_unchecked(v)
+    }
+}
 
 /// Handles webhook deliveries
 pub trait Hook: Send + Sync {
@@ -34,18 +44,6 @@ impl<H: Hook + 'static> AuthenticateHook<H> {
         let pbytes = payload.as_bytes();
         let mut mac = Hmac::new(Sha1::new(), &sbytes);
         mac.input(&pbytes);
-        // fixme: borrowed from rustc, may exist somewhere in serde
-        fn to_hex(bs: &[u8]) -> String {
-            let mut v = Vec::with_capacity(bs.len() * 2);
-            for &byte in bs.iter() {
-                v.push(CHARS[(byte >> 4) as usize]);
-                v.push(CHARS[(byte & 0xf) as usize]);
-            }
-
-            unsafe {
-                String::from_utf8_unchecked(v)
-            }
-        }
         to_hex(mac.result().code()) == str::replace(signature, "sha1=", "")
     }
 }
@@ -76,7 +74,6 @@ mod tests {
     use crypto::mac::Mac;
     use crypto::hmac::Hmac;
     use crypto::sha1::Sha1;
-    use rustc_serialize::hex::ToHex;
 
     #[test]
     fn authenticate_signatures() {
@@ -88,7 +85,7 @@ mod tests {
         let pbytes = payload.as_bytes();
         let mut mac = Hmac::new(Sha1::new(), &sbytes);
         mac.input(&pbytes);
-        let signature = mac.result().code().to_hex();
+        let signature = to_hex(mac.result().code());
         assert!(authenticated.authenticate(payload, format!("sha1={}", signature).as_ref()))
     }
 }
