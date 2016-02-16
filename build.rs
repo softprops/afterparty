@@ -1,16 +1,16 @@
 extern crate case;
 extern crate hyper;
-extern crate rustc_serialize;
+extern crate syntex;
+extern crate serde_codegen;
+extern crate serde_json;
 
 use std::collections::BTreeMap;
 use case::CaseExt;
-use rustc_serialize::json::Json;
 use hyper::Client;
 use std::env;
 use std::fs::File;
 use std::io::{Result, Read, Write};
 use std::path::Path;
-
 
 /// generate an enum of Events
 fn main() {
@@ -45,6 +45,13 @@ fn main() {
         return;
     }
     generate(&events).unwrap();
+
+    let out_dir = env::var_os("OUT_DIR").unwrap();
+    let src = Path::new(&out_dir).join("events.rs.in");
+    let dst = Path::new(&out_dir).join("events.rs");
+    let mut registry = syntex::Registry::new();
+    serde_codegen::register(&mut registry);
+    registry.expand("", &src, &dst).unwrap();
 }
 
 fn fetch_payload_data(events: &Vec<&str>) -> Result<()> {
@@ -68,11 +75,9 @@ fn fetch_payload_data(events: &Vec<&str>) -> Result<()> {
 
 fn generate(events: &Vec<&str>) -> Result<()> {
     let out_dir = env::var("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("events.rs");
+    let dest_path = Path::new(&out_dir).join("events.rs.in");
     let mut f = try!(File::create(&dest_path));
-
-    try!(f.write_all(b"/// An enumeration of possible github events
-#[derive(Debug, RustcDecodable)]
+    try!(f.write_all(b"#[derive(Debug, Deserialize)]
 pub enum Event {
 "));
     let mut defs = BTreeMap::new();
@@ -80,13 +85,13 @@ pub enum Event {
         let mut data = try!(File::open(format!("data/{}.json", event)));
         let mut buf = String::new();
         try!(data.read_to_string(&mut buf));
-        let parsed = Json::from_str(&buf).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&buf).unwrap();
         let enum_name = container_name(event);
         try!(f.write_all(format!("  {} ", enum_name).as_bytes()));
         try!(f.write_all(b"{"));
 
         match parsed {
-            Json::Object(obj) => {
+            serde_json::Value::Object(obj) => {
                 for (k, v) in obj {
                     try!(f.write_all(format!("
     {}: {},",
@@ -110,7 +115,7 @@ pub enum Event {
 }
 
 fn print_structs(f: &mut File,
-                 defs: BTreeMap<String, Json>,
+                 defs: BTreeMap<String, serde_json::Value>,
                  generated: &mut Vec<String>,
                  depth: usize)
                  -> Result<()> {
@@ -121,16 +126,20 @@ fn print_structs(f: &mut File,
         }
         println!("struct {}", struct_name);
         try!(f.write_all(format!("
-#[derive(Default, Debug, RustcDecodable)]
+#[derive(Default, Debug, Deserialize)]
 pub struct {} ",
                                  struct_name)
                              .as_bytes()));
         try!(f.write_all(b"{"));
         match json {
-            &Json::Object(ref obj) => {
+            &serde_json::Value::Object(ref obj) => {
                 for (k, v) in obj {
-                    try!(f.write_all(format!("
-  pub {}: {},",
+                    // fields are renamed to enable deserialization of fields
+                    // that are also reserved works in rust
+                    try!(f.write_all(format!(r#"
+  #[serde(rename="{}")]
+  pub {}: {},"#,
+                                             k,
                                              field_name(&k),
                                              value(&struct_name, &mut aux, &k, &v))
                                          .as_bytes()))
@@ -150,21 +159,21 @@ pub struct {} ",
     Ok(())
 }
 
-fn value(container: &String, defs: &mut BTreeMap<String, Json>, k: &str, j: &Json) -> String {
+fn value(container: &String, defs: &mut BTreeMap<String, serde_json::Value>, k: &str, j: &serde_json::Value) -> String {
     match j {
-        &Json::I64(_) => "i64".to_owned(),
-        &Json::U64(_) => "u64".to_owned(),
-        &Json::F64(_) => "f64".to_owned(),
-        &Json::String(_) => "String".to_owned(),
-        &Json::Boolean(_) => "bool".to_owned(),
-        &Json::Array(ref jv) => {
+        &serde_json::Value::I64(_) => "i64".to_owned(),
+        &serde_json::Value::U64(_) => "u64".to_owned(),
+        &serde_json::Value::F64(_) => "f64".to_owned(),
+        &serde_json::Value::String(_) => "String".to_owned(),
+        &serde_json::Value::Bool(_) => "bool".to_owned(),
+        &serde_json::Value::Array(ref jv) => {
             if jv.is_empty() {
                 "Vec<String>".to_owned() // this is just a guess!
             } else {
                 format!("Vec<{}>", value(&container, defs, k, &jv[0]))
             }
         }
-        obj @ &Json::Object(_) => {
+        obj @ &serde_json::Value::Object(_) => {
             if "payload" == k {
                 "HashMap<String, String>".to_owned()
             } else {
@@ -176,7 +185,7 @@ fn value(container: &String, defs: &mut BTreeMap<String, Json>, k: &str, j: &Jso
                 struct_name
             }
         }
-        &Json::Null => "Option<String>".to_owned(),
+        &serde_json::Value::Null => "Option<String>".to_owned(),
     }
 }
 

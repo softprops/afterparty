@@ -12,8 +12,10 @@ build = "build.rs"
 
 [build-dependencies]
 hyper = "0.6"
-rustc-serialize = "0.3"
-case = "*"
+case = "0.0"
+serde_codegen = "0.6"
+syntex = "0.28"
+serde_json = "0.6"
 
 [dev-dependencies]
 env_logger = "0.3"
@@ -22,5 +24,6 @@ env_logger = "0.3"
 clap = "1.0"
 hyper = "0.6"
 rust-crypto = "0.2"
-rustc-serialize = "0.3"
 log = "0.3"
+serde = "0.6"
+serde_json = "0.6"

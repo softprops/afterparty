@@ -5,7 +5,8 @@ extern crate log;
 #[macro_use]
 extern crate hyper;
 extern crate crypto;
-extern crate rustc_serialize;
+extern crate serde;
+extern crate serde_json;
 
 mod hook;
 mod events;
@@ -13,9 +14,9 @@ mod events;
 pub use events::Event;
 pub use hook::{AuthenticateHook, Hook};
 use hyper::server::{Handler, Request, Response};
-use rustc_serialize::json;
 use std::collections::HashMap;
 use std::io::Read;
+
 
 /// signature for request
 /// see [this document](https://developer.github.com/webhooks/securing/) for more information
@@ -40,7 +41,7 @@ pub struct Delivery<'a> {
 
 impl<'a> Delivery<'a> {
     pub fn new(id: &'a str, event: &'a str, payload: &'a str, signature: Option<&'a str>) -> Option<Delivery<'a>>  {
-        match json::decode::<Event>(&payload) {
+        match serde_json::from_str::<Event>(&payload) {
             Ok(parsed) => {
                 Some(Delivery {
                     id: id,
