@@ -170,8 +170,9 @@ fn value(container: &String, defs: &mut BTreeMap<String, serde_json::Value>, k: 
             if "payload" == k {
                 // payloads may contain any arbitrary json structure
                 // it is unsafe to assume a fixed type of map, string, ect
-                "Value".to_owned()//HashMap<String, String>".to_owned()
+                "Value".to_owned()
             } else {
+                // avoid recusive types by compormising on an alternative name
                 let struct_name = match container_name(k) {
                     ref recursive if recursive == container => format!("{}Inner", recursive),
                     valid => valid,
