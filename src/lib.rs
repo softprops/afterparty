@@ -40,7 +40,11 @@ pub struct Delivery<'a> {
 }
 
 impl<'a> Delivery<'a> {
-    pub fn new(id: &'a str, event: &'a str, payload: &'a str, signature: Option<&'a str>) -> Option<Delivery<'a>>  {
+    pub fn new(id: &'a str,
+               event: &'a str,
+               payload: &'a str,
+               signature: Option<&'a str>)
+               -> Option<Delivery<'a>> {
         match serde_json::from_str::<Event>(&payload) {
             Ok(parsed) => {
                 Some(Delivery {
@@ -48,10 +52,10 @@ impl<'a> Delivery<'a> {
                     event: event,
                     payload: parsed,
                     unparsed_payload: payload,
-                    signature: signature
+                    signature: signature,
                 })
-            },
-            _ => None
+            }
+            _ => None,
         }
     }
 }
@@ -126,11 +130,16 @@ impl Handler for Hub {
             if let Ok(_) = req.read_to_string(&mut payload) {
                 let signature = headers.get::<XHubSignature>();
                 info!("recv '{}' event with signature '{:?}'", event, signature);
-                match Delivery::new(delivery, event, payload.as_ref(), signature.map(|s| s.as_ref())) {
+                match Delivery::new(delivery,
+                                    event,
+                                    payload.as_ref(),
+                                    signature.map(|s| s.as_ref())) {
                     Some(delivery) => self.deliver(&delivery),
-                    _ => error!("failed to parse event {:?} for delivery {:?}",
-                                event,
-                                delivery)
+                    _ => {
+                        error!("failed to parse event {:?} for delivery {:?}",
+                               event,
+                               delivery)
+                    }
                 }
             }
         }

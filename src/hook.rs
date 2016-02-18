@@ -4,7 +4,7 @@ use crypto::hmac::Hmac;
 use crypto::sha1::Sha1;
 
 // fixme: borrowed from rustc, may exist somewhere in serde
-static CHARS: &'static[u8] = b"0123456789abcdef";
+static CHARS: &'static [u8] = b"0123456789abcdef";
 pub fn to_hex(bs: &[u8]) -> String {
     let mut v = Vec::with_capacity(bs.len() * 2);
     for &byte in bs.iter() {
@@ -12,9 +12,7 @@ pub fn to_hex(bs: &[u8]) -> String {
         v.push(CHARS[(byte & 0xf) as usize]);
     }
 
-    unsafe {
-        String::from_utf8_unchecked(v)
-    }
+    unsafe { String::from_utf8_unchecked(v) }
 }
 
 /// Handles webhook deliveries
