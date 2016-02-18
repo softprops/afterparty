@@ -11,7 +11,7 @@ license = "MIT"
 build = "build.rs"
 
 [build-dependencies]
-hyper = "0.6"
+hyper = "0.7"
 case = "0.0"
 serde_codegen = "0.6"
 syntex = "0.28"
