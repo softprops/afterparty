@@ -25,7 +25,7 @@ fn main() {
     if let Ok(_) = env::var("SKIP_GENERATE") {
         return;
     }
-    generate(&events).unwrap();
+    generate_enum(&events).unwrap();
 
     let out_dir = env::var_os("OUT_DIR").unwrap();
     let src = Path::new(&out_dir).join("events.rs.in");
@@ -55,10 +55,18 @@ fn fetch_payload_data(events: &Vec<&str>) -> Result<()> {
     Ok(())
 }
 
-fn generate(events: &Vec<&str>) -> Result<()> {
+fn generate_enum(events: &Vec<&str>) -> Result<()> {
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("events.rs.in");
     let mut f = try!(File::create(&dest_path));
+
+    // synthensize a type that can represent arbitrary json in deployment payloads
+    // as well has a type which we may implement a default value
+    try!(f.write_all(b"#[derive(Debug, Deserialize)]
+pub struct Value { pub json: serde_json::Value }
+
+"));
+
     try!(f.write_all(b"#[derive(Debug, Deserialize)]
 pub enum Event {
 "));
@@ -93,6 +101,9 @@ pub enum Event {
 "));
 
     try!(print_structs(&mut f, defs, &mut vec![], 0));
+
+    //
+
     Ok(())
 }
 
@@ -157,7 +168,9 @@ fn value(container: &String, defs: &mut BTreeMap<String, serde_json::Value>, k: 
         }
         obj @ &serde_json::Value::Object(_) => {
             if "payload" == k {
-                "HashMap<String, String>".to_owned()
+                // payloads may contain any arbitrary json structure
+                // it is unsafe to assume a fixed type of map, string, ect
+                "Value".to_owned()//HashMap<String, String>".to_owned()
             } else {
                 let struct_name = match container_name(k) {
                     ref recursive if recursive == container => format!("{}Inner", recursive),
