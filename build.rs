@@ -14,30 +14,14 @@ use std::path::Path;
 
 /// generate an enum of Events
 fn main() {
-
-    let events = vec!["commit_comment",
-                      "create",
-                      "delete",
-                      "deployment",
-                      "deployment_status",
-                      "fork",
-                      "gollum",
-                      "issue_comment",
-                      "issues",
-                      "member",
-                      "membership",
-                      "page_build",
-                      "ping",
-                      "public",
-                      "pull_request",
-                      "pull_request_review_comment",
-                      "push",
-                      "release",
-                      "repository",
-                      "status",
-                      "team_add",
-                      "watch"];
-
+    let mut buf = String::new();
+    let mut event_list = File::open("events.txt").unwrap();
+    event_list.read_to_string(&mut buf).unwrap();
+    let events = buf.lines().collect::<Vec<&str>>();
+    println!("events {:#?}", events);
+    for var  in env::vars() {
+        println!("env {:#?}", var);
+    }
     if let Ok(_) = env::var("FETCH_PAYLOAD_DATA") {
         fetch_payload_data(&events).unwrap();
     }
@@ -55,6 +39,7 @@ fn main() {
 }
 
 fn fetch_payload_data(events: &Vec<&str>) -> Result<()> {
+    println!("fetching payload data for events {:#?}", events);
     let data_dir = Path::new("data");
     let client = Client::new();
     for event in events {
@@ -199,6 +184,8 @@ fn container_name(field: &str) -> String {
 
 /// works around conflicts with reservied words
 fn field_name(s: &str) -> String {
+    // todo: this is only as robust as it needs to be
+    // this list is not complete
     let reserved = vec!["ref", "self", "type"];
     if reserved.contains(&s) {
         format!("_{}", s)
