@@ -1,6 +1,6 @@
 # afterparty
 
-[![Build Status](https://travis-ci.org/softprops/afterparty.svg?branch=master)](https://travis-ci.org/softprops/afterparty) [![Coverage Status](https://coveralls.io/repos/github/softprops/afterparty/badge.svg?branch=master)](https://coveralls.io/github/softprops/afterparty?branch=master)
+[![Build Status](https://travis-ci.org/softprops/afterparty.svg?branch=master)](https://travis-ci.org/softprops/afterparty) [![Coverage Status](https://coveralls.io/repos/github/softprops/afterparty/badge.svg?branch=master)](https://coveralls.io/github/softprops/afterparty?branch=master) [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 > what happens on github...
 
