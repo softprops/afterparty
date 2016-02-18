@@ -8,7 +8,7 @@
 
 Find them [here](http://softprops.github.io/afterparty)
 
-# usage
+## usage
 
 Afterparty has to key abstractions a `Hook`, a handler of webhook deliveries, and a `Hub`, a registry for hooks. A `Hub` delivers `Deliveries` to interested hooks.
 
