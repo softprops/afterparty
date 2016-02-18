@@ -10,9 +10,9 @@ Find them [here](http://softprops.github.io/afterparty)
 
 ## usage
 
-Afterparty has to key abstractions a `Hook`, a handler of webhook deliveries, and a `Hub`, a registry for hooks. A `Hub` delivers `Deliveries` to interested hooks.
+Afterparty has two key abstractions, a `Hook`: a handler interface webhook deliveries, and a `Hub`: a registry for hooks. A `Hub` delivers `Delivery` instances to interested hooks.
 
-A `Delivery` encodes all relevant webhook request information including a unique identifier for the delivery, the event name, and typed payload of represented as an enumerated type of `Event`.
+A `Delivery` encodes all relevant webhook request information including a unique identifier for the delivery, the event name, and statically typed payload represented as an enumerated type of `Event`.
 
 Hubs implements hyper's Server Handler trait so that it may be mounted into any hyper Server.
 
