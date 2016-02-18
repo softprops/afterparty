@@ -17,7 +17,6 @@ use hyper::server::{Handler, Request, Response};
 use std::collections::HashMap;
 use std::io::Read;
 
-
 /// signature for request
 /// see [this document](https://developer.github.com/webhooks/securing/) for more information
 header! {(XHubSignature, "X-Hub-Signature") => [String]}
@@ -106,7 +105,6 @@ impl Hub {
             _ => None,
         };
         combined
-
     }
 
     /// serially handles delivery by applying each
