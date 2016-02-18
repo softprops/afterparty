@@ -19,9 +19,6 @@ fn main() {
     event_list.read_to_string(&mut buf).unwrap();
     let events = buf.lines().collect::<Vec<&str>>();
     println!("events {:#?}", events);
-    for var  in env::vars() {
-        println!("env {:#?}", var);
-    }
     if let Ok(_) = env::var("FETCH_PAYLOAD_DATA") {
         fetch_payload_data(&events).unwrap();
     }
