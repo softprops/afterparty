@@ -11,8 +11,8 @@ license = "MIT"
 build = "build.rs"
 
 [build-dependencies]
-hyper = "0.7"
 case = "0.0"
+hyper = "0.7"
 serde_codegen = "0.6.14"
 syntex = "0.29"
 serde_json = "0.6"
@@ -21,6 +21,7 @@ serde_json = "0.6"
 env_logger = "0.3"
 
 [dependencies]
+case = "0.0"
 hyper = "0.7"
 rust-crypto = "0.2"
 log = "0.3"

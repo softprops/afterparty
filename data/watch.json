@@ -23,6 +23,7 @@
       "type": "User",
       "site_admin": false
     },
+      "deployments_url": null,
     "private": false,
     "html_url": "https://github.com/baxterthehacker/public-repo",
     "description": "",

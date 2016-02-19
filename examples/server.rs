@@ -14,12 +14,12 @@ pub fn main() {
     let mut hub = Hub::new();
     hub.handle("pull_request", |delivery: &Delivery| {
         println!("rec delivery {:#?}", delivery);
-        match delivery.payload {
+        /*match delivery.payload {
             Event::PullRequest { ref action, ref sender, .. } => {
                 println!("sender {} action {}", sender.login, action)
             }
             _ => (),
-        }
+        }*/
     });
     let srvc = Server::http(&addr[..])
                    .unwrap()

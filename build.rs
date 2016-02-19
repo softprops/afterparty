@@ -83,8 +83,9 @@ pub enum Event {
         match parsed {
             serde_json::Value::Object(obj) => {
                 for (k, v) in obj {
-                    try!(f.write_all(format!("
-    {}: {},",
+                    try!(f.write_all(format!(r#"
+      #[serde(rename="{}")]
+      {}: {},"#, k,
                                              field_name(&k),
                                              value(&enum_name, &mut defs, &k, &v))
                                          .as_bytes()))
@@ -101,8 +102,6 @@ pub enum Event {
 "));
 
     try!(print_structs(&mut f, defs, &mut vec![], 0));
-
-    //
 
     Ok(())
 }
@@ -130,9 +129,8 @@ pub struct {} ",
                     // fields are renamed to enable deserialization of fields
                     // that are also reserved works in rust
                     try!(f.write_all(format!(r#"
-  #[serde(rename="{}")]
-  pub {}: {},"#,
-                                             k,
+    #[serde(rename="{}")]
+    pub {}: {},"#, k,
                                              field_name(&k),
                                              value(&struct_name, &mut aux, &k, &v))
                                          .as_bytes()))

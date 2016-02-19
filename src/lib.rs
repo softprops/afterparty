@@ -4,6 +4,7 @@
 extern crate log;
 #[macro_use]
 extern crate hyper;
+extern crate case;
 extern crate crypto;
 extern crate serde;
 extern crate serde_json;
@@ -44,7 +45,10 @@ impl<'a> Delivery<'a> {
                payload: &'a str,
                signature: Option<&'a str>)
                -> Option<Delivery<'a>> {
-        match serde_json::from_str::<Event>(&payload) {
+
+        // patching raw payload with camelized name field for enum deserialization
+        let patched = events::patch_payload_json(event, payload);
+        match serde_json::from_str::<Event>(&patched) {
             Ok(parsed) => {
                 Some(Delivery {
                     id: id,
@@ -54,7 +58,11 @@ impl<'a> Delivery<'a> {
                     signature: signature,
                 })
             }
-            _ => None,
+            Err(e) => {
+                error!(
+                    "failed to parse json {:?}\n{:#?}", e, patched);
+                None
+            },
         }
     }
 }
