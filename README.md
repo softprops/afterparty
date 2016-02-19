@@ -1,8 +1,8 @@
 # afterparty
 
-[![Build Status](https://travis-ci.org/softprops/afterparty.svg?branch=master)](https://travis-ci.org/softprops/afterparty) [![Coverage Status](https://coveralls.io/repos/github/softprops/afterparty/badge.svg?branch=master)](https://coveralls.io/github/softprops/afterparty?branch=master) [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
+[![Build Status](https://travis-ci.org/softprops/afterparty.svg?branch=master)](https://travis-ci.org/softprops/afterparty) [![Coverage Status](https://coveralls.io/repos/github/softprops/afterparty/badge.svg?branch=master)](https://coveralls.io/github/softprops/afterparty?branch=master) [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE) [![crates.io](http://meritbadge.herokuapp.com/afterparty)](https://crates.io/crates/afterparty)
 
-> where your commits go after github
+> Where your commits go after github
 
 Afterparty is a library for building Github webhook integrations in Rust.
 
@@ -18,6 +18,9 @@ A `Delivery` encodes all relevant webhook request information including a unique
 
 Hooks subscribe to [Events](https://developer.github.com/webhooks/#events) via `Hub`'s a `handle` and `handle_authenticated` functions.
 To subscribe to multiple events, subscribe with "*" and pattern match on the provided delivery's payload value.
+
+To register your webhook with Github visit your repo's hooks configuration form `https://github.com/{login}/{repo}/settings/hooks/new` and select the events you
+want Github to notify your server about.
 
 Hubs implements [Hyper](https://github.com/hyperium/hyper)'s Server Handler trait so that it may be mounted into any hyper Server.
 
