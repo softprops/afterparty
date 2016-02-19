@@ -81,7 +81,7 @@ impl Hub {
 
     /// adds a new web hook which will only be applied
     /// when a delivery is revcieved with a valid
-    /// request signature
+    /// request signature based on the provided secret
     pub fn handle_authenticated<H, S>(&mut self, event: &str, secret: S, hook: H)
         where H: Hook + 'static,
               S: Into<String>
