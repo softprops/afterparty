@@ -16,7 +16,7 @@ Afterparty has two key abstractions, a `Hook`: a handler interface webhook deliv
 
 A `Delivery` encodes all relevant webhook request information including a unique identifier for the delivery, the event name, and statically typed payload represented as an enumerated type of `Event`.
 
-Hubs implements hyper's Server Handler trait so that it may be mounted into any hyper Server.
+Hubs implements [Hyper](https://github.com/hyperium/hyper)'s Server Handler trait so that it may be mounted into any hyper Server.
 
 ```rust
 extern crate afterparty;
