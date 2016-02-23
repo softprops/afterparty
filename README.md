@@ -26,7 +26,7 @@ Hubs implements [Hyper](https://github.com/hyperium/hyper)'s Server Handler trai
 
 ```rust
 extern crate afterparty;
-extern create hyper;
+extern crate hyper;
 
 use hyper::Server;
 use afterparty::{Delivery, Event, Hub};
