@@ -173,6 +173,9 @@ fn value(container: &String, defs: &mut BTreeMap<String, serde_json::Value>, k: 
                 // avoid recusive types by compormising on an alternative name
                 let struct_name = match container_name(k) {
                     ref recursive if recursive == container => format!("{}Inner", recursive),
+                    ref exists if defs.contains_key(exists) && defs[exists] != *obj => {
+                        format!("{}{}", container, exists)
+                    }
                     valid => valid,
                 };
                 defs.insert(struct_name.clone(), obj.clone());
