@@ -1,6 +1,5 @@
 extern crate case;
 extern crate hyper;
-extern crate syntex;
 extern crate serde_codegen;
 extern crate serde_json;
 
@@ -30,9 +29,7 @@ fn main() {
     let out_dir = env::var_os("OUT_DIR").unwrap();
     let src = Path::new(&out_dir).join("events.rs.in");
     let dst = Path::new(&out_dir).join("events.rs");
-    let mut registry = syntex::Registry::new();
-    serde_codegen::register(&mut registry);
-    registry.expand("", &src, &dst).unwrap();
+    serde_codegen::expand(&src, &dst).unwrap();
 }
 
 fn fetch_payload_data(events: &Vec<&str>) -> Result<()> {
