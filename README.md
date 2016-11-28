@@ -10,9 +10,18 @@ Afterparty is a library for building Github webhook integrations in Rust.
 
 Find them [here](http://softprops.github.io/afterparty)
 
+## install
+
+Add the following to your `Cargo.toml` file
+
+```toml
+[dependencies]
+afterparty = "0.1"
+```
+
 ## usage
 
-Afterparty has two key abstractions, a `Hook`: a handler interface webhook deliveries, and a `Hub`: a registry for hooks. A `Hub` delivers `Delivery` instances to interested hooks.
+Afterparty has two key abstractions, a `Hook`: a handler interface webhook deliveries, and a `Hub`: a registry for hooks. A `Hub` provides `Delivery` instances to interested hooks.
 
 A `Delivery` encodes all relevant webhook request information including a unique identifier for the delivery, the event name, and statically typed payload represented as an enumerated type of `Event`.
 
