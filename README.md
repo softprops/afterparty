@@ -55,9 +55,10 @@ fn main() {
        }
     });
     let svc = Server::http("0.0.0.0:4567")
-       .handle(hub)
+       .unwrap();
+       .handle(hub);
     println!("hub is up");
-    srv.unwrap();
+    svc.unwrap();
 }
 ```
 
