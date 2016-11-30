@@ -4,7 +4,7 @@ extern crate env_logger;
 extern crate afterparty;
 extern crate hyper;
 
-use afterparty::{Delivery, Event, Hub};
+use afterparty::{Delivery, Hub};
 
 use hyper::Server;
 
