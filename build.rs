@@ -1,11 +1,11 @@
 extern crate case;
-extern crate hyper;
+//extern crate hyper;
 extern crate serde_codegen;
 extern crate serde_json;
 
 use std::collections::BTreeMap;
 use case::CaseExt;
-use hyper::Client;
+//use hyper::Client;
 use std::env;
 use std::fs::File;
 use std::io::{Result, Read, Write};
@@ -35,7 +35,7 @@ fn main() {
 fn fetch_payload_data(events: &Vec<&str>) -> Result<()> {
     println!("fetching payload data for events {:#?}", events);
     let data_dir = Path::new("data");
-    let client = Client::new();
+    /*let client = Client::new();
     for event in events {
         let src = format!("https://raw.githubusercontent.com/github/developer.github.\
                            com/master/lib/webhooks/{}.payload.json",
@@ -48,7 +48,7 @@ fn fetch_payload_data(events: &Vec<&str>) -> Result<()> {
         let outfile = data_dir.join(format!("{}.json", event));
         let mut f = try!(File::create(outfile));
         try!(f.write_all(buf.as_bytes()));
-    }
+    }*/
     Ok(())
 }
 
