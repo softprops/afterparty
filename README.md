@@ -62,6 +62,26 @@ fn main() {
 }
 ```
 
+### note on UFCS
+
+In the case that you have hyper::server::Handler and hubcaps::Hub in scope you may need to use UFCS to invoke
+the handle method on a HUB instance.
+
+For example...
+
+```rust
+extern crate afterparty;
+extern crate hyper;
+
+use hyper::server::Handle;
+use afterparty::{Delivery, Hub};
+
+fn main() {
+    let mut hub = Hub::new();
+    hubcaps::Hub::handle(&mut hub, "&", |delivery: &Delivery| { });
+}
+```
+
 ## building
 
 As far as rust project builds go this one is somewhat interesting. This library uses serde for json encoding/decoding
