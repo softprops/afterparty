@@ -8,6 +8,7 @@ extern crate case;
 extern crate crypto;
 extern crate serde;
 extern crate serde_json;
+extern crate hex;
 
 mod hook;
 mod events;

@@ -1,19 +1,9 @@
 use super::Delivery;
 use crypto::mac::Mac;
 use crypto::hmac::Hmac;
+use crypto::mac::MacResult;
 use crypto::sha1::Sha1;
-
-// fixme: borrowed from rustc, may exist somewhere in serde
-static CHARS: &'static [u8] = b"0123456789abcdef";
-pub fn to_hex(bs: &[u8]) -> String {
-    let mut v = Vec::with_capacity(bs.len() * 2);
-    for &byte in bs.iter() {
-        v.push(CHARS[(byte >> 4) as usize]);
-        v.push(CHARS[(byte & 0xf) as usize]);
-    }
-
-    unsafe { String::from_utf8_unchecked(v) }
-}
+use hex::FromHex;
 
 /// Handles webhook deliveries
 pub trait Hook: Send + Sync {
@@ -38,11 +28,19 @@ impl<H: Hook + 'static> AuthenticateHook<H> {
     }
 
     fn authenticate(&self, payload: &str, signature: &str) -> bool {
-        let sbytes = self.secret.as_bytes();
-        let pbytes = payload.as_bytes();
-        let mut mac = Hmac::new(Sha1::new(), &sbytes);
-        mac.input(&pbytes);
-        to_hex(mac.result().code()) == str::replace(signature, "sha1=", "")
+        // https://developer.github.com/webhooks/securing/#validating-payloads-from-github
+        let sans_prefix = signature[5..signature.len()].as_bytes();
+        match Vec::from_hex(sans_prefix) {
+            Ok(sigbytes) => {
+                let sbytes = self.secret.as_bytes();
+                let mut mac = Hmac::new(Sha1::new(), &sbytes);
+                let pbytes = payload.as_bytes();
+                mac.input(&pbytes);
+                // constant time comparison
+                mac.result() == MacResult::new(&sigbytes)
+            }
+            Err(_) => false
+        }
     }
 }
 
@@ -72,6 +70,7 @@ mod tests {
     use crypto::mac::Mac;
     use crypto::hmac::Hmac;
     use crypto::sha1::Sha1;
+    use hex::ToHex;
 
     #[test]
     fn authenticate_signatures() {
@@ -83,7 +82,7 @@ mod tests {
         let pbytes = payload.as_bytes();
         let mut mac = Hmac::new(Sha1::new(), &sbytes);
         mac.input(&pbytes);
-        let signature = to_hex(mac.result().code());
+        let signature = mac.result().code().to_hex();
         assert!(authenticated.authenticate(payload, format!("sha1={}", signature).as_ref()))
     }
 }
