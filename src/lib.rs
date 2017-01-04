@@ -162,8 +162,8 @@ mod tests {
     #[test]
     fn hub_hooks() {
         let mut hub = Hub::new();
-        hub.handle("push", |_: &Delivery| {});
-        hub.handle("*", |_: &Delivery| {});
+        Hub::handle(&mut hub, "push", |_: &Delivery| {});
+        Hub::handle(&mut hub, "*", |_: &Delivery| {});
         assert_eq!(Some(2),
                    hub.hooks("push").map(|hooks| hooks.into_iter().count()))
     }
