@@ -157,13 +157,16 @@ impl Handler for Hub {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{Delivery, Hub};
 
     #[test]
     fn hub_hooks() {
         let mut hub = Hub::new();
-        Hub::handle(&mut hub, "push", |_: &Delivery| {});
-        Hub::handle(&mut hub, "*", |_: &Delivery| {});
+        // UFCS may be required is hyper::server::Handler is in scope
+        // Hub::handle(&mut hub, "push", |_: &Delivery| {});
+        // Hub::handle(&mut hub, "*", |_: &Delivery| {});
+        hub.handle("push", |_: &Delivery| {});
+        hub.handle("*", |_: &Delivery| {});
         assert_eq!(Some(2),
                    hub.hooks("push").map(|hooks| hooks.into_iter().count()))
     }
