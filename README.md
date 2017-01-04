@@ -78,7 +78,7 @@ use afterparty::{Delivery, Hub};
 
 fn main() {
     let mut hub = Hub::new();
-    hubcaps::Hub::handle(&mut hub, "&", |delivery: &Delivery| { });
+    hubcaps::Hub::handle(&mut hub, "*", |delivery: &Delivery| { });
 }
 ```
 
