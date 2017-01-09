@@ -2,6 +2,7 @@ extern crate case;
 //extern crate hyper;
 extern crate serde_codegen;
 extern crate serde_json;
+extern crate glob;
 
 use std::collections::BTreeMap;
 use case::CaseExt;
@@ -13,6 +14,10 @@ use std::path::Path;
 
 /// generate an enum of Events
 fn main() {
+    for entry in glob::glob("data/**/*.json").expect("Failed to read glob pattern") {
+        println!("cargo:rerun-if-changed={}", entry.unwrap().display());
+    }
+
     let mut buf = String::new();
     let mut event_list = File::open("events.txt").unwrap();
     event_list.read_to_string(&mut buf).unwrap();
