@@ -118,14 +118,15 @@ impl Hub {
 
 impl Handler for Hub {
     fn handle(&self, mut req: Request, res: Response) {
+        let mut payload = String::new();
         let headers = req.headers.clone();
         if let (Some(&XGithubEvent(ref event)), Some(&XGithubDelivery(ref delivery))) =
                (headers.get::<XGithubEvent>(), headers.get::<XGithubDelivery>()) {
-            let signature = headers.get::<XHubSignature>();
-            info!("recv '{}' event with signature '{:?}'", event, signature);
+                let signature = headers.get::<XHubSignature>();
+                info!("recv '{}' event with signature '{:?}'", event, signature);
             if let Some(hooks) = self.hooks(event) {
-                let mut payload = String::new();
                 if let Ok(_) = req.read_to_string(&mut payload) {
+
                     match Delivery::new(delivery,
                                         event,
                                         payload.as_ref(),
