@@ -418,7 +418,7 @@ pub struct UserRef {
   pub email: Option<String>
 }
 
-/// differs from Repository in owner
+/// differs from Repository in owner type and some timestamp field types
 #[derive(Default, Debug, Deserialize)]
 pub struct PushRepository {
     pub archive_url: String,
@@ -432,13 +432,12 @@ pub struct PushRepository {
     pub compare_url: String,
     pub contents_url: String,
     pub contributors_url: String,
-    pub created_at: String,
+    pub created_at: u64,
     pub default_branch: String,
     pub description: String,
     pub downloads_url: String,
     pub events_url: String,
     pub fork: bool,
-    pub forks: u64,
     pub forks_count: u64,
     pub forks_url: String,
     pub full_name: String,
@@ -471,7 +470,7 @@ pub struct PushRepository {
     pub owner: UserRef,
     pub private: bool,
     pub pulls_url: String,
-    pub pushed_at: String,
+    pub pushed_at: u64,
     pub releases_url: String,
     pub size: u64,
     pub ssh_url: String,
@@ -508,7 +507,6 @@ pub struct Repository {
     pub description: String,
     pub downloads_url: String,
     pub events_url: String,
-    pub fork: bool,
     pub forks: u64,
     pub forks_count: u64,
     pub forks_url: String,
