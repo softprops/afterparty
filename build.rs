@@ -1,59 +1,88 @@
-extern crate case;
-//extern crate hyper;
 extern crate serde_codegen;
 extern crate serde_json;
 extern crate glob;
 
 use std::collections::BTreeMap;
-use case::CaseExt;
-//use hyper::Client;
 use std::env;
+use std::fs;
 use std::fs::File;
 use std::io::{Result, Read, Write};
 use std::path::Path;
 
 /// generate an enum of Events
 fn main() {
-    for entry in glob::glob("data/**/*.json").expect("Failed to read glob pattern") {
+     for entry in glob::glob("data/**/*.json").expect("Failed to read glob pattern") {
+        println!("cargo:rerun-if-changed={}", entry.unwrap().display());
+     }
+
+    for entry in glob::glob("src/**/*.rs.in").expect("Failed to read glob pattern") {
         println!("cargo:rerun-if-changed={}", entry.unwrap().display());
     }
 
-    let mut buf = String::new();
-    let mut event_list = File::open("events.txt").unwrap();
-    event_list.read_to_string(&mut buf).unwrap();
-    let events = buf.lines().collect::<Vec<&str>>();
-    println!("events {:#?}", events);
-    if let Ok(_) = env::var("FETCH_PAYLOAD_DATA") {
-        fetch_payload_data(&events).unwrap();
-    }
-    if let Ok(_) = env::var("SKIP_GENERATE") {
-        return;
-    }
-    generate_enum(&events).unwrap();
-
     let out_dir = env::var_os("OUT_DIR").unwrap();
-    let src = Path::new(&out_dir).join("events.rs.in");
-    let dst = Path::new(&out_dir).join("events.rs");
-    serde_codegen::expand(&src, &dst).unwrap();
+
+    // Switch to our `src` directory so that we have the right base for our
+    // globs, and so that we won't need to strip `src/` off every path.
+    env::set_current_dir("src").unwrap();
+
+    for entry in glob::glob("**/*.rs.in").expect("Failed to read glob pattern") {
+        match entry {
+            Ok(src) => {
+                let mut dst = Path::new(&out_dir).join(&src);
+
+                // Change ".rs.in" to ".rs".
+                dst.set_file_name(src.file_stem().expect("Failed to get file stem"));
+                dst.set_extension("rs");
+
+                // Make sure our target directory exists.  We only need
+                // this if there are extra nested sudirectories under src/.
+                fs::create_dir_all(dst.parent().unwrap()).unwrap();
+
+                // Process our source file.
+                serde_codegen::expand(&src, &dst).unwrap();
+            }
+            Err(e) => {
+                panic!("Error globbing: {}", e);
+            }
+        }
+    }
+
+    // let mut buf = String::new();
+    // let mut event_list = File::open("events.txt").unwrap();
+    // event_list.read_to_string(&mut buf).unwrap();
+    // let events = buf.lines().collect::<Vec<&str>>();
+    // println!("events {:#?}", events);
+    // if let Ok(_) = env::var("FETCH_PAYLOAD_DATA") {
+    // fetch_payload_data(&events).unwrap();
+    // }
+    // if let Ok(_) = env::var("SKIP_GENERATE") {
+    // return;
+    // }
+    // generate_enum(&events).unwrap();
+    //
+    // let out_dir = env::var_os("OUT_DIR").unwrap();
+    // let src = Path::new(&out_dir).join("events.rs.in");
+    // let dst = Path::new(&out_dir).join("events.rs");
+    // serde_codegen::expand(&src, &dst).unwrap();
 }
 
-fn fetch_payload_data(events: &Vec<&str>) -> Result<()> {
+/*fn fetch_payload_data(events: &Vec<&str>) -> Result<()> {
     println!("fetching payload data for events {:#?}", events);
-    let data_dir = Path::new("data");
-    /*let client = Client::new();
-    for event in events {
-        let src = format!("https://raw.githubusercontent.com/github/developer.github.\
-                           com/master/lib/webhooks/{}.payload.json",
-                          event);
-        let mut res = client.get(&src)
-                            .send()
-                            .unwrap();
-        let mut buf = String::new();
-        try!(res.read_to_string(&mut buf));
-        let outfile = data_dir.join(format!("{}.json", event));
-        let mut f = try!(File::create(outfile));
-        try!(f.write_all(buf.as_bytes()));
-    }*/
+    // let data_dir = Path::new("data");
+    // let client = Client::new();
+    // for event in events {
+    // let src = format!("https://raw.githubusercontent.com/github/developer.github.\
+    // com/master/lib/webhooks/{}.payload.json",
+    // event);
+    // let mut res = client.get(&src)
+    // .send()
+    // .unwrap();
+    // let mut buf = String::new();
+    // try!(res.read_to_string(&mut buf));
+    // let outfile = data_dir.join(format!("{}.json", event));
+    // let mut f = try!(File::create(outfile));
+    // try!(f.write_all(buf.as_bytes()));
+    // }
     Ok(())
 }
 
@@ -87,10 +116,11 @@ pub enum Event {
                 for (k, v) in obj {
                     try!(f.write_all(format!(r#"
       #[serde(rename="{}")]
-      {}: {},"#, k,
+      {}: {},"#,
+                                             k,
                                              field_name(&k),
                                              value(&enum_name, &mut defs, &k, &v))
-                                         .as_bytes()))
+                        .as_bytes()))
                 }
             }
             _ => (),
@@ -123,7 +153,7 @@ fn print_structs(f: &mut File,
 #[derive(Default, Debug, Deserialize)]
 pub struct {} ",
                                  struct_name)
-                             .as_bytes()));
+            .as_bytes()));
         try!(f.write_all(b"{"));
         match json {
             &serde_json::Value::Object(ref obj) => {
@@ -132,10 +162,11 @@ pub struct {} ",
                     // that are also reserved works in rust
                     try!(f.write_all(format!(r#"
     #[serde(rename="{}")]
-    pub {}: {},"#, k,
+    pub {}: {},"#,
+                                             k,
                                              field_name(&k),
                                              value(&struct_name, &mut aux, &k, &v))
-                                         .as_bytes()))
+                        .as_bytes()))
                 }
             }
             _ => (),
@@ -152,7 +183,11 @@ pub struct {} ",
     Ok(())
 }
 
-fn value(container: &String, defs: &mut BTreeMap<String, serde_json::Value>, k: &str, j: &serde_json::Value) -> String {
+fn value(container: &String,
+         defs: &mut BTreeMap<String, serde_json::Value>,
+         k: &str,
+         j: &serde_json::Value)
+         -> String {
     match j {
         &serde_json::Value::I64(_) => "i64".to_owned(),
         &serde_json::Value::U64(_) => "u64".to_owned(),
@@ -207,3 +242,4 @@ fn field_name(s: &str) -> String {
         s.to_owned()
     }
 }
+*/
