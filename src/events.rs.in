@@ -70,7 +70,7 @@ pub enum Event {
   },
   Membership {
       action: String,
-      member: Member,
+      member: User,
       organization: Organization,
       scope: String,
       sender: User,
@@ -317,27 +317,6 @@ pub struct IssueCommentComment {
 }
 
 #[derive(Default, Debug, Deserialize)]
-pub struct Member {
-    pub avatar_url: String,
-    pub events_url: String,
-    pub followers_url: String,
-    pub following_url: String,
-    pub gists_url: String,
-    pub gravatar_id: String,
-    pub html_url: String,
-    pub id: u64,
-    pub login: String,
-    pub organizations_url: String,
-    pub received_events_url: String,
-    pub repos_url: String,
-    pub site_admin: bool,
-    pub starred_url: String,
-    pub subscriptions_url: String,
-    pub _type: String,
-    pub url: String,
-}
-
-#[derive(Default, Debug, Deserialize)]
 pub struct Organization {
     pub avatar_url: String,
     pub events_url: String,
@@ -347,6 +326,7 @@ pub struct Organization {
     pub public_members_url: String,
     pub repos_url: String,
     pub url: String,
+    pub description: Option<String>
 }
 
 #[derive(Default, Debug, Deserialize)]
@@ -411,13 +391,6 @@ pub struct PullRequestReviewComment {
     pub user: User,
 }
 
-
-#[derive(Default, Debug, Deserialize)]
-pub struct UserRef {
-    pub email: String,
-    pub name: String,
-}
-
 #[derive(Default, Debug, Deserialize)]
 pub struct Release {
     pub assets: Vec<String>,
@@ -440,7 +413,7 @@ pub struct Release {
 }
 
 #[derive(Default, Debug, Deserialize)]
-pub struct PushRepoUser {
+pub struct UserRef {
   pub name: String,
   pub email: Option<String>
 }
@@ -495,7 +468,7 @@ pub struct PushRepository {
     pub notifications_url: String,
     pub open_issues: u64,
     pub open_issues_count: u64,
-    pub owner: PushRepoUser,
+    pub owner: UserRef,
     pub private: bool,
     pub pulls_url: String,
     pub pushed_at: String,
@@ -605,27 +578,6 @@ pub struct GitUser {
     pub name: String,
     pub username: Option<String>,
     pub date: Option<String>
-}
-
-#[derive(Default, Debug, Deserialize)]
-pub struct Committer {
-    pub avatar_url: String,
-    pub events_url: String,
-    pub followers_url: String,
-    pub following_url: String,
-    pub gists_url: String,
-    pub gravatar_id: String,
-    pub html_url: String,
-    pub id: u64,
-    pub login: String,
-    pub organizations_url: String,
-    pub received_events_url: String,
-    pub repos_url: String,
-    pub site_admin: bool,
-    pub starred_url: String,
-    pub subscriptions_url: String,
-    pub _type: String,
-    pub url: String,
 }
 
 #[derive(Default, Debug, Deserialize)]
