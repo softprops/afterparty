@@ -1,6 +1,7 @@
 # 0.1.3 (unreleased)
 
 * make signature verification happen in constant time, avoiding potential timing attack
+* only parse inbound events if interested hooks exists
 
 # 0.1.2
 
