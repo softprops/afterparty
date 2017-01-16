@@ -49,6 +49,8 @@ impl<H: Hook + 'static> Hook for AuthenticateHook<H> {
         if let Some(sig) = delivery.signature {
             if self.authenticate(delivery.unparsed_payload, sig) {
                 self.hook.handle(delivery)
+            } else {
+                error!("failed to authenticate request");
             }
         }
     }
