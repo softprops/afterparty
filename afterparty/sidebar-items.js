@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Event",""]],"struct":[["AuthenticateHook","A delivery authenticator for hooks"],["Delivery","A delivery encodes all information about web hook request"],["Hub","A hub is a registry of hooks"],["XGithubDelivery",""],["XGithubEvent",""],["XHubSignature",""]],"trait":[["Hook","Handles webhook deliveries"]]});

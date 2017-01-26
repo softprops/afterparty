@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Event` enum in crate `afterparty`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Event">
+
+    <title>afterparty::Event - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>afterparty</a></p><script>window.sidebarCurrent = {name: 'Event', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content enum">
+<h1 class='fqn'><span class='in-band'>Enum <a href='index.html'>afterparty</a>::<wbr><a class='enum' href=''>Event</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-7750' class='srclink' href='../src/afterparty/home/travis/build/softprops/afterparty/target/debug/build/afterparty-cc9b23566b4a1906/out/events.rs.html#7278-7432' title='goto source code'>[src]</a></span></h1>
+<pre class='rust enum'>pub enum Event {
+    CommitComment {
+        action: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        comment: Comment,
+        repository: Repository,
+        sender: User,
+    },
+    Create {
+        description: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        master_branch: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        pusher_type: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        _ref: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        ref_type: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        repository: Repository,
+        sender: User,
+    },
+    Delete {
+        pusher_type: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        _ref: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        ref_type: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        repository: Repository,
+        sender: User,
+    },
+    Deployment {
+        deployment: Deployment,
+        repository: Repository,
+        sender: User,
+    },
+    DeploymentStatus {
+        deployment: Deployment,
+        deployment_status: DeploymentStatus,
+        repository: Repository,
+        sender: User,
+    },
+    Fork {
+        forkee: Repository,
+        repository: Repository,
+        sender: User,
+    },
+    Gollum {
+        pages: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;Pages&gt;,
+        repository: Repository,
+        sender: User,
+    },
+    IssueComment {
+        action: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        comment: IssueCommentComment,
+        issue: Issue,
+        repository: Repository,
+        sender: User,
+    },
+    Issues {
+        action: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        issue: Issue,
+        repository: Repository,
+        sender: User,
+    },
+    Member {
+        action: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        member: User,
+        repository: Repository,
+        sender: User,
+    },
+    Membership {
+        action: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        member: User,
+        organization: Organization,
+        scope: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        sender: User,
+        team: Team,
+    },
+    PageBuild {
+        build: PageBuild,
+        id: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+        repository: Repository,
+        sender: User,
+    },
+    Ping {
+        hook: Hook,
+        hook_id: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+        repository: Repository,
+        sender: User,
+        zen: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+    },
+    Public {
+        repository: Repository,
+        sender: User,
+    },
+    PullRequest {
+        action: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        number: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+        pull_request: PullRequestDetails,
+        repository: Repository,
+        sender: User,
+    },
+    PullRequestReviewComment {
+        action: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        comment: PullRequestReviewComment,
+        pull_request: PullRequest,
+        repository: Repository,
+        sender: User,
+    },
+    Push {
+        after: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        base_ref: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;,
+        before: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        commits: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;CommitStats&gt;,
+        compare: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        created: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>,
+        deleted: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>,
+        forced: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>,
+        head_commit: CommitStats,
+        pusher: UserRef,
+        _ref: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        repository: PushRepository,
+        sender: User,
+    },
+    Release {
+        action: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        release: Release,
+        repository: Repository,
+        sender: User,
+    },
+    Repository {
+        action: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        organization: Organization,
+        repository: Repository,
+        sender: User,
+    },
+    Status {
+        commit: CommitRef,
+        context: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        created_at: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        description: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;,
+        id: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+        name: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        repository: Repository,
+        sender: User,
+        sha: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        state: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        target_url: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;,
+        updated_at: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+    },
+    TeamAdd {
+        organization: Organization,
+        repository: Repository,
+        sender: User,
+        team: Team,
+    },
+    Watch {
+        action: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+        repository: Repository,
+        sender: User,
+    },
+}</pre><h2 class='variants'>Variants</h2>
+<span id='variant.CommitComment' class='variant'><span id='CommitComment.v' class='invisible'><code>CommitComment</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.CommitComment.field.action'><span id='CommitComment.v.action.v' class='invisible'><code>action:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.CommitComment.field.comment'><span id='CommitComment.v.comment.v' class='invisible'><code>comment:&nbsp;Comment</code></span></td><td></td></tr><tr><td id='variant.CommitComment.field.repository'><span id='CommitComment.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.CommitComment.field.sender'><span id='CommitComment.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Create' class='variant'><span id='Create.v' class='invisible'><code>Create</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Create.field.description'><span id='Create.v.description.v' class='invisible'><code>description:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Create.field.master_branch'><span id='Create.v.master_branch.v' class='invisible'><code>master_branch:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Create.field.pusher_type'><span id='Create.v.pusher_type.v' class='invisible'><code>pusher_type:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Create.field._ref'><span id='Create.v._ref.v' class='invisible'><code>_ref:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Create.field.ref_type'><span id='Create.v.ref_type.v' class='invisible'><code>ref_type:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Create.field.repository'><span id='Create.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Create.field.sender'><span id='Create.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Delete' class='variant'><span id='Delete.v' class='invisible'><code>Delete</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Delete.field.pusher_type'><span id='Delete.v.pusher_type.v' class='invisible'><code>pusher_type:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Delete.field._ref'><span id='Delete.v._ref.v' class='invisible'><code>_ref:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Delete.field.ref_type'><span id='Delete.v.ref_type.v' class='invisible'><code>ref_type:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Delete.field.repository'><span id='Delete.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Delete.field.sender'><span id='Delete.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Deployment' class='variant'><span id='Deployment.v' class='invisible'><code>Deployment</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Deployment.field.deployment'><span id='Deployment.v.deployment.v' class='invisible'><code>deployment:&nbsp;Deployment</code></span></td><td></td></tr><tr><td id='variant.Deployment.field.repository'><span id='Deployment.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Deployment.field.sender'><span id='Deployment.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.DeploymentStatus' class='variant'><span id='DeploymentStatus.v' class='invisible'><code>DeploymentStatus</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.DeploymentStatus.field.deployment'><span id='DeploymentStatus.v.deployment.v' class='invisible'><code>deployment:&nbsp;Deployment</code></span></td><td></td></tr><tr><td id='variant.DeploymentStatus.field.deployment_status'><span id='DeploymentStatus.v.deployment_status.v' class='invisible'><code>deployment_status:&nbsp;DeploymentStatus</code></span></td><td></td></tr><tr><td id='variant.DeploymentStatus.field.repository'><span id='DeploymentStatus.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.DeploymentStatus.field.sender'><span id='DeploymentStatus.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Fork' class='variant'><span id='Fork.v' class='invisible'><code>Fork</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Fork.field.forkee'><span id='Fork.v.forkee.v' class='invisible'><code>forkee:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Fork.field.repository'><span id='Fork.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Fork.field.sender'><span id='Fork.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Gollum' class='variant'><span id='Gollum.v' class='invisible'><code>Gollum</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Gollum.field.pages'><span id='Gollum.v.pages.v' class='invisible'><code>pages:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;Pages&gt;</code></span></td><td></td></tr><tr><td id='variant.Gollum.field.repository'><span id='Gollum.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Gollum.field.sender'><span id='Gollum.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.IssueComment' class='variant'><span id='IssueComment.v' class='invisible'><code>IssueComment</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.IssueComment.field.action'><span id='IssueComment.v.action.v' class='invisible'><code>action:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.IssueComment.field.comment'><span id='IssueComment.v.comment.v' class='invisible'><code>comment:&nbsp;IssueCommentComment</code></span></td><td></td></tr><tr><td id='variant.IssueComment.field.issue'><span id='IssueComment.v.issue.v' class='invisible'><code>issue:&nbsp;Issue</code></span></td><td></td></tr><tr><td id='variant.IssueComment.field.repository'><span id='IssueComment.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.IssueComment.field.sender'><span id='IssueComment.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Issues' class='variant'><span id='Issues.v' class='invisible'><code>Issues</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Issues.field.action'><span id='Issues.v.action.v' class='invisible'><code>action:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Issues.field.issue'><span id='Issues.v.issue.v' class='invisible'><code>issue:&nbsp;Issue</code></span></td><td></td></tr><tr><td id='variant.Issues.field.repository'><span id='Issues.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Issues.field.sender'><span id='Issues.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Member' class='variant'><span id='Member.v' class='invisible'><code>Member</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Member.field.action'><span id='Member.v.action.v' class='invisible'><code>action:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Member.field.member'><span id='Member.v.member.v' class='invisible'><code>member:&nbsp;User</code></span></td><td></td></tr><tr><td id='variant.Member.field.repository'><span id='Member.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Member.field.sender'><span id='Member.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Membership' class='variant'><span id='Membership.v' class='invisible'><code>Membership</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Membership.field.action'><span id='Membership.v.action.v' class='invisible'><code>action:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Membership.field.member'><span id='Membership.v.member.v' class='invisible'><code>member:&nbsp;User</code></span></td><td></td></tr><tr><td id='variant.Membership.field.organization'><span id='Membership.v.organization.v' class='invisible'><code>organization:&nbsp;Organization</code></span></td><td></td></tr><tr><td id='variant.Membership.field.scope'><span id='Membership.v.scope.v' class='invisible'><code>scope:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Membership.field.sender'><span id='Membership.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr><tr><td id='variant.Membership.field.team'><span id='Membership.v.team.v' class='invisible'><code>team:&nbsp;Team</code></span></td><td></td></tr></table><span id='variant.PageBuild' class='variant'><span id='PageBuild.v' class='invisible'><code>PageBuild</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.PageBuild.field.build'><span id='PageBuild.v.build.v' class='invisible'><code>build:&nbsp;PageBuild</code></span></td><td></td></tr><tr><td id='variant.PageBuild.field.id'><span id='PageBuild.v.id.v' class='invisible'><code>id:&nbsp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a></code></span></td><td></td></tr><tr><td id='variant.PageBuild.field.repository'><span id='PageBuild.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.PageBuild.field.sender'><span id='PageBuild.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Ping' class='variant'><span id='Ping.v' class='invisible'><code>Ping</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Ping.field.hook'><span id='Ping.v.hook.v' class='invisible'><code>hook:&nbsp;Hook</code></span></td><td></td></tr><tr><td id='variant.Ping.field.hook_id'><span id='Ping.v.hook_id.v' class='invisible'><code>hook_id:&nbsp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a></code></span></td><td></td></tr><tr><td id='variant.Ping.field.repository'><span id='Ping.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Ping.field.sender'><span id='Ping.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr><tr><td id='variant.Ping.field.zen'><span id='Ping.v.zen.v' class='invisible'><code>zen:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr></table><span id='variant.Public' class='variant'><span id='Public.v' class='invisible'><code>Public</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Public.field.repository'><span id='Public.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Public.field.sender'><span id='Public.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.PullRequest' class='variant'><span id='PullRequest.v' class='invisible'><code>PullRequest</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.PullRequest.field.action'><span id='PullRequest.v.action.v' class='invisible'><code>action:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.PullRequest.field.number'><span id='PullRequest.v.number.v' class='invisible'><code>number:&nbsp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a></code></span></td><td></td></tr><tr><td id='variant.PullRequest.field.pull_request'><span id='PullRequest.v.pull_request.v' class='invisible'><code>pull_request:&nbsp;PullRequestDetails</code></span></td><td></td></tr><tr><td id='variant.PullRequest.field.repository'><span id='PullRequest.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.PullRequest.field.sender'><span id='PullRequest.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.PullRequestReviewComment' class='variant'><span id='PullRequestReviewComment.v' class='invisible'><code>PullRequestReviewComment</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.PullRequestReviewComment.field.action'><span id='PullRequestReviewComment.v.action.v' class='invisible'><code>action:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.PullRequestReviewComment.field.comment'><span id='PullRequestReviewComment.v.comment.v' class='invisible'><code>comment:&nbsp;PullRequestReviewComment</code></span></td><td></td></tr><tr><td id='variant.PullRequestReviewComment.field.pull_request'><span id='PullRequestReviewComment.v.pull_request.v' class='invisible'><code>pull_request:&nbsp;PullRequest</code></span></td><td></td></tr><tr><td id='variant.PullRequestReviewComment.field.repository'><span id='PullRequestReviewComment.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.PullRequestReviewComment.field.sender'><span id='PullRequestReviewComment.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Push' class='variant'><span id='Push.v' class='invisible'><code>Push</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Push.field.after'><span id='Push.v.after.v' class='invisible'><code>after:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Push.field.base_ref'><span id='Push.v.base_ref.v' class='invisible'><code>base_ref:&nbsp;<a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;</code></span></td><td></td></tr><tr><td id='variant.Push.field.before'><span id='Push.v.before.v' class='invisible'><code>before:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Push.field.commits'><span id='Push.v.commits.v' class='invisible'><code>commits:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;CommitStats&gt;</code></span></td><td></td></tr><tr><td id='variant.Push.field.compare'><span id='Push.v.compare.v' class='invisible'><code>compare:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Push.field.created'><span id='Push.v.created.v' class='invisible'><code>created:&nbsp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></span></td><td></td></tr><tr><td id='variant.Push.field.deleted'><span id='Push.v.deleted.v' class='invisible'><code>deleted:&nbsp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></span></td><td></td></tr><tr><td id='variant.Push.field.forced'><span id='Push.v.forced.v' class='invisible'><code>forced:&nbsp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></span></td><td></td></tr><tr><td id='variant.Push.field.head_commit'><span id='Push.v.head_commit.v' class='invisible'><code>head_commit:&nbsp;CommitStats</code></span></td><td></td></tr><tr><td id='variant.Push.field.pusher'><span id='Push.v.pusher.v' class='invisible'><code>pusher:&nbsp;UserRef</code></span></td><td></td></tr><tr><td id='variant.Push.field._ref'><span id='Push.v._ref.v' class='invisible'><code>_ref:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Push.field.repository'><span id='Push.v.repository.v' class='invisible'><code>repository:&nbsp;PushRepository</code></span></td><td></td></tr><tr><td id='variant.Push.field.sender'><span id='Push.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Release' class='variant'><span id='Release.v' class='invisible'><code>Release</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Release.field.action'><span id='Release.v.action.v' class='invisible'><code>action:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Release.field.release'><span id='Release.v.release.v' class='invisible'><code>release:&nbsp;Release</code></span></td><td></td></tr><tr><td id='variant.Release.field.repository'><span id='Release.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Release.field.sender'><span id='Release.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Repository' class='variant'><span id='Repository.v' class='invisible'><code>Repository</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Repository.field.action'><span id='Repository.v.action.v' class='invisible'><code>action:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Repository.field.organization'><span id='Repository.v.organization.v' class='invisible'><code>organization:&nbsp;Organization</code></span></td><td></td></tr><tr><td id='variant.Repository.field.repository'><span id='Repository.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Repository.field.sender'><span id='Repository.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><span id='variant.Status' class='variant'><span id='Status.v' class='invisible'><code>Status</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Status.field.commit'><span id='Status.v.commit.v' class='invisible'><code>commit:&nbsp;CommitRef</code></span></td><td></td></tr><tr><td id='variant.Status.field.context'><span id='Status.v.context.v' class='invisible'><code>context:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Status.field.created_at'><span id='Status.v.created_at.v' class='invisible'><code>created_at:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Status.field.description'><span id='Status.v.description.v' class='invisible'><code>description:&nbsp;<a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;</code></span></td><td></td></tr><tr><td id='variant.Status.field.id'><span id='Status.v.id.v' class='invisible'><code>id:&nbsp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a></code></span></td><td></td></tr><tr><td id='variant.Status.field.name'><span id='Status.v.name.v' class='invisible'><code>name:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Status.field.repository'><span id='Status.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Status.field.sender'><span id='Status.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr><tr><td id='variant.Status.field.sha'><span id='Status.v.sha.v' class='invisible'><code>sha:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Status.field.state'><span id='Status.v.state.v' class='invisible'><code>state:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Status.field.target_url'><span id='Status.v.target_url.v' class='invisible'><code>target_url:&nbsp;<a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;</code></span></td><td></td></tr><tr><td id='variant.Status.field.updated_at'><span id='Status.v.updated_at.v' class='invisible'><code>updated_at:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr></table><span id='variant.TeamAdd' class='variant'><span id='TeamAdd.v' class='invisible'><code>TeamAdd</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.TeamAdd.field.organization'><span id='TeamAdd.v.organization.v' class='invisible'><code>organization:&nbsp;Organization</code></span></td><td></td></tr><tr><td id='variant.TeamAdd.field.repository'><span id='TeamAdd.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.TeamAdd.field.sender'><span id='TeamAdd.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr><tr><td id='variant.TeamAdd.field.team'><span id='TeamAdd.v.team.v' class='invisible'><code>team:&nbsp;Team</code></span></td><td></td></tr></table><span id='variant.Watch' class='variant'><span id='Watch.v' class='invisible'><code>Watch</code></span></span><h3 class='fields'>Fields</h3>
+
+                           <table><tr><td id='variant.Watch.field.action'><span id='Watch.v.action.v' class='invisible'><code>action:&nbsp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></code></span></td><td></td></tr><tr><td id='variant.Watch.field.repository'><span id='Watch.v.repository.v' class='invisible'><code>repository:&nbsp;Repository</code></span></td><td></td></tr><tr><td id='variant.Watch.field.sender'><span id='Watch.v.sender.v' class='invisible'><code>sender:&nbsp;User</code></span></td><td></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='enum' href='../afterparty/enum.Event.html' title='afterparty::Event'>Event</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-7882' class='srclink' href='../src/afterparty/home/travis/build/softprops/afterparty/target/debug/build/afterparty-cc9b23566b4a1906/out/events.rs.html#7277' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class='method'><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "afterparty";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
