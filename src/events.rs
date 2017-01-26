@@ -1,4 +1,5 @@
 //! Representations of Github events
+//! See Github's [official docs](https://developer.github.com/v3/activity/events/types/) for more information
 
 extern crate case;
 extern crate serde;

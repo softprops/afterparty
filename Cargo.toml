@@ -11,7 +11,6 @@ license = "MIT"
 build = "build.rs"
 
 [build-dependencies]
-case = "0.0"
 serde_codegen = "0.8"
 serde_json = "0.8"
 glob = "0.2.11"
