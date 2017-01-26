@@ -16,7 +16,7 @@ Add the following to your `Cargo.toml` file
 
 ```toml
 [dependencies]
-afterparty = "0.1"
+afterparty = "0.2"
 ```
 
 ## usage
